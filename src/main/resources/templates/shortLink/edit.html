@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{shortLink.edit.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{shortLink.edit.headline}]]</h1>
+                <div>
+                    <a th:href="@{/shortLinks}" class="btn btn-secondary">[[#{shortLink.edit.back}]]</a>
+                </div>
+            </div>
+            <div th:replace="~{fragments/forms::globalErrors('shortLink')}" />
+            <form th:action="${requestUri}" method="post">
+                <div th:replace="~{fragments/forms::inputRow(object='shortLink', field='id', disabled=true, type='number')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='shortLink', field='userId', required=true, type='number')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='shortLink', field='originalUrl', required=true)}" />
+                <div th:replace="~{fragments/forms::inputRow(object='shortLink', field='shortUrl')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='shortLink', field='creationDate')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='shortLink', field='expiryDate')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='shortLink', field='status', type='checkbox')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='shortLink', field='clicks', type='number')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='shortLink', field='user', type='select')}" />
+                <input type="submit" th:value="#{shortLink.edit.headline}" class="btn btn-primary mt-4" />
+            </form>
+        </div>
+    </body>
+</html>

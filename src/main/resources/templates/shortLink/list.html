@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{shortLink.list.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{shortLink.list.headline}]]</h1>
+                <div>
+                    <a th:href="@{/shortLinks/add}" class="btn btn-primary ms-2">[[#{shortLink.list.createNew}]]</a>
+                </div>
+            </div>
+            <div th:if="${shortLinks.empty}">[[#{shortLink.list.empty}]]</div>
+            <div th:if="${!shortLinks.empty}" class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">[[#{shortLink.id.label}]]</th>
+                            <th scope="col">[[#{shortLink.userId.label}]]</th>
+                            <th scope="col">[[#{shortLink.originalUrl.label}]]</th>
+                            <th scope="col">[[#{shortLink.shortUrl.label}]]</th>
+                            <th scope="col">[[#{shortLink.creationDate.label}]]</th>
+                            <th scope="col">[[#{shortLink.expiryDate.label}]]</th>
+                            <th scope="col">[[#{shortLink.status.label}]]</th>
+                            <th scope="col">[[#{shortLink.clicks.label}]]</th>
+                            <th><!-- --></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="shortLink : ${shortLinks}">
+                            <td>[[${shortLink.id}]]</td>
+                            <td>[[${shortLink.userId}]]</td>
+                            <td>[[${shortLink.originalUrl}]]</td>
+                            <td>[[${shortLink.shortUrl}]]</td>
+                            <td>[[${shortLink.creationDate}]]</td>
+                            <td>[[${shortLink.expiryDate}]]</td>
+                            <td>[[${shortLink.status}]]</td>
+                            <td>[[${shortLink.clicks}]]</td>
+                            <td>
+                                <div class="float-end text-nowrap">
+                                    <a th:href="@{/shortLinks/edit/{id}(id=${shortLink.id})}" class="btn btn-sm btn-secondary">[[#{shortLink.list.edit}]]</a>
+                                    <form th:action="@{/shortLinks/delete/{id}(id=${shortLink.id})}"
+                                            th:data-confirm-message="#{delete.confirm}" method="post" class="js-submit-confirm d-inline">
+                                        <button type="submit" class="btn btn-sm btn-secondary">[[#{shortLink.list.delete}]]</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

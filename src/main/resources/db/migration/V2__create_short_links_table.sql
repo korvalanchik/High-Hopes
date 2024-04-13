@@ -2,7 +2,7 @@
 -- Table structure for short_links
 -- --------------------------------
 CREATE TABLE short_links (
-     id INT AUTO_INCREMENT PRIMARY KEY,
+     id BIGINT PRIMARY KEY,
      user_id BIGINT NOT NULL,
      original_url VARCHAR(255) NOT NULL,
      short_url VARCHAR(255) UNIQUE NOT NULL,

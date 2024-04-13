@@ -1,4 +1,4 @@
-package com.example.highhopes.utils;
+package com.example.highhopes.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
