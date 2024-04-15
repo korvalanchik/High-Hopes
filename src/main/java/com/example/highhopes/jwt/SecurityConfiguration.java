@@ -46,7 +46,7 @@ public class SecurityConfiguration {
         httpSecurity.csrf().disable()
                 .authorizeRequests()
                 .requestMatchers("/").permitAll()
-                .requestMatchers("/{shortLink}").permitAll()
+                .requestMatchers("/shortLinks/{shortLink}").permitAll()
                 .requestMatchers("/webjars/**").permitAll()
                 .requestMatchers("/authenticate").permitAll()
                 .requestMatchers("/register").permitAll()

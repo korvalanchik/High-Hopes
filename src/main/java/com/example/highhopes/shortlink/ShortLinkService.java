@@ -61,13 +61,16 @@ public class ShortLinkService {
     }
 
     public String getOriginalUrl(HttpServletResponse response, String shortLink) {
-        ShortLink link = shortLinkRepository.findByShortUrl(shortLink);
-
+        ShortLink link = shortLinkRepository.findByShortLink(shortLink);
         if (link != null) {
             Cookie cookie = new Cookie(shortLink, link.getOriginalUrl());
             cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
             cookie.setPath("/");
             response.addCookie(cookie);
+
+            link.setClicks(link.getClicks() + 1);
+            shortLinkRepository.save(link);
+
             return link.getOriginalUrl();
         } else {
             return "short link not found";

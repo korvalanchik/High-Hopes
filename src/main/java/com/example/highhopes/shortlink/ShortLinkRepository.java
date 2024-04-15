@@ -11,5 +11,5 @@ public interface ShortLinkRepository extends JpaRepository<ShortLink, Long> {
     ShortLink findFirstByUser(User user);
 
     @Query(nativeQuery = true, value = "SELECT * FROM short_links sl WHERE sl.short_url = :short_url")
-    ShortLink findByShortUrl(@Param("short_url") String shortUrl);
+    ShortLink findByShortLink(@Param("short_url") String shortLink);
 }

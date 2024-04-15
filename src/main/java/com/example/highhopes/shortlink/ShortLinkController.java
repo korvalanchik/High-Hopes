@@ -4,6 +4,8 @@ import com.example.highhopes.user.User;
 import com.example.highhopes.user.UserRepository;
 import com.example.highhopes.utils.CustomCollectors;
 import com.example.highhopes.utils.WebUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -41,6 +43,17 @@ public class ShortLinkController {
     public String list(final Model model) {
         model.addAttribute("shortLinks", shortLinkService.findAll());
         return "shortLink/list";
+    }
+
+    @GetMapping("/{shortLink}")
+    public String redirectToOriginalUrl(@PathVariable String shortLink, HttpServletRequest request,
+                                        HttpServletResponse httpServletResponse) {
+        String originalUrlCookie = shortLinkService.findCookie(request, shortLink);
+        if (originalUrlCookie.equals("Not found")) {
+            String originalUrl = shortLinkService.getOriginalUrl(httpServletResponse, shortLink);
+            return "redirect:" + originalUrl;
+        }
+        return "redirect:" + originalUrlCookie;
     }
 
     @GetMapping("/add")
