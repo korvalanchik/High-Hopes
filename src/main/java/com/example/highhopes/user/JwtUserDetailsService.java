@@ -1,6 +1,5 @@
-package com.example.highhopes.jwt;
+package com.example.highhopes.user;
 
-import com.example.highhopes.user.UserRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

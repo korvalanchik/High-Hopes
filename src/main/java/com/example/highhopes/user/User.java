@@ -50,12 +50,6 @@ public class User {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
-//    @PrePersist
-//    public void prePersist() {
-//        this.dateCreated = OffsetDateTime.now();
-//        this.lastUpdated = OffsetDateTime.now();
-//        System.out.println("Date created");
-//    }
 
     @PreUpdate
     public void preUpdate() {

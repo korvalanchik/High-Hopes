@@ -1,78 +1,126 @@
 package com.example.highhopes.jwt;
 
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
+import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+
+import org.springframework.security.core.userdetails.User;
+
+/**
+ * This class is inspired from
+ * https://github.com/spring-projects/spring-security-samples/blob/5.7.x/servlet/spring-boot/java/jwt/login/src/main/java/example/RestConfig.java
+ */
+@EnableWebSecurity
 @Configuration
 public class SecurityConfiguration {
 
-    private final JwtRequestFilter jwtRequestFilter;
+    @Value("${jwt.public.key}")
+    RSAPublicKey publicKey;
 
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    @Value("${jwt.private.key}")
+    RSAPrivateKey privateKey;
 
-    private final JwtUserDetailsService jwtUserDetailsService;
-
-    public SecurityConfiguration(JwtRequestFilter jwtRequestFilter, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtUserDetailsService jwtUserDetailsService) {
-        this.jwtRequestFilter = jwtRequestFilter;
-        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-        this.jwtUserDetailsService = jwtUserDetailsService;
-    }
-
+    /**
+     * This bean is used to configure the JWT token. Configure the URLs that should not be protected by the JWT token.
+     *
+     * @param http the HttpSecurity object
+     * @return the HttpSecurity object
+     * @throws Exception if an error occurs
+     */
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity httpSecurity)
-            throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(jwtUserDetailsService).passwordEncoder(new BCryptPasswordEncoder());
-        return authenticationManagerBuilder.build();
-    }
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        //@formatter:off
+        return http
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-        AuthenticationManagerBuilder authenticationManagerBuilder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder);
-
-        httpSecurity.csrf().disable()
-                .authorizeRequests()
-                .requestMatchers("/").permitAll()
-                .requestMatchers("/webjars/**").permitAll()
-                .requestMatchers("/authenticate").permitAll()
-                .requestMatchers("/register").permitAll()
-                .requestMatchers("/users/**").permitAll()
-                .requestMatchers("/js/**").permitAll()
-                .requestMatchers("/css/**").permitAll()
-                .requestMatchers("/images/**").permitAll()
-                .requestMatchers("/swagger-ui/**").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/users/{id}").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/users/{id}").authenticated()
-                .anyRequest().permitAll()
+                        .requestMatchers("/api/auth/**", "/swagger-ui-custom.html" ,"/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**",
+                                "/swagger-ui/index.html","/api-docs/**", "/api/users")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
+                .cors(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-        return httpSecurity.build();
+                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+                        .and())
+                .build();
+        //@formatter:on
     }
 
+    /**
+     * For demonstration/example, we use the InMemoryUserDetailsManager.
+     *
+     * @return Returns the UserDetailsService with pre-configure credentials.
+     * @see InMemoryUserDetailsManager
+     */
+//    @Bean
+//    UserDetailsService allUsers() {
+//        // @formatter:off
+//        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+//        manager
+//                .createUser(User.builder()
+//                        .passwordEncoder(password -> password)
+//                        .username("john")
+//                        .password("password")
+//                        .authorities("USER")
+//                        .roles("USER").build());
+//        manager
+//                .createUser(User.builder()
+//                        .passwordEncoder(password -> password)
+//                        .username("jane")
+//                        .password("password")
+//                        .authorities("USER")
+//                        .roles("USER").build());
+//        return manager;
+//        // @formatter:on
+//    }
+
+    /**
+     * This bean is used to decode the JWT token.
+     *
+     * @return Returns the JwtDecoder bean to decode JWT tokens.
+     */
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/authenticate");
-    }
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withPublicKey(this.publicKey).build();
     }
 
+    /**
+     * This bean is used to encode the JWT token.
+     *
+     * @return Returns the JwtEncoder bean to encode JWT tokens.
+     */
+    @Bean
+    JwtEncoder jwtEncoder() {
+        JWK jwk = new RSAKey.Builder(this.publicKey).privateKey(this.privateKey).build();
+        return new NimbusJwtEncoder(new ImmutableJWKSet<>(new JWKSet(jwk)));
+    }
 }
+
