@@ -12,3 +12,8 @@ CREATE TABLE short_links (
      clicks INT NOT NULL,
      FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+INSERT INTO short_links (user_id, original_url, short_url, creation_date, expiry_date, status, clicks)
+VALUES
+    (1, 'https://app.slack.com/client/T060L949SJY/C06TVJGDCPK', 'http://short.link/abc123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '1' MONTH, TRUE, 1),
+    (2, 'https://app.slack.com/client/T060L949SJY/C060L94BZAQ', 'http://short.link/def456', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '1' MONTH, TRUE, 2);
