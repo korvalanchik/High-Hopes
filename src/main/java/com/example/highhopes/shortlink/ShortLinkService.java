@@ -3,7 +3,7 @@ package com.example.highhopes.shortlink;
 import com.example.highhopes.user.User;
 import com.example.highhopes.user.UserRepository;
 import com.example.highhopes.utils.NotFoundException;
-import com.example.highhopes.utils.ShortLinkUtils;
+import com.example.highhopes.utils.CookieUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Sort;
@@ -22,7 +22,7 @@ public class ShortLinkService {
     private final ShortLinkRepository shortLinkRepository;
     private final UserRepository userRepository;
 
-    private ShortLinkUtils shortLinkUtils;
+    private final CookieUtils cookieUtils = new CookieUtils();
     private static final String USER_NOT_FOUND = "User not found with username: ";
 
     public ShortLinkService(final ShortLinkRepository shortLinkRepository,
@@ -63,21 +63,27 @@ public class ShortLinkService {
 
     public String getOriginalUrl(String shortLink, HttpServletRequest request, HttpServletResponse response) {
         String resultLink = "Short link not found";
-        String linkCookie = shortLinkUtils.findCookie(request, shortLink);
+        String linkCookie = cookieUtils.findCookie(request, shortLink);
         if (linkCookie.equals("Not found")) {
             ShortLink linkDb = shortLinkRepository.findByShortLink(shortLink);
             if (linkDb != null) {
-                response.addCookie(shortLinkUtils.createCookie(shortLink,linkDb.getOriginalUrl()));
+                response.addCookie(cookieUtils.createCookie(shortLink,linkDb.getOriginalUrl()));
+                linkDb.setClicks(linkDb.getClicks() + 1);
+                shortLinkRepository.save(linkDb);
                 resultLink = linkDb.getOriginalUrl();
             }
         } else {
+            incrementClicks(shortLink);
             resultLink = linkCookie;
         }
 
-        if (!resultLink.equals("Short link not found")) {
-            shortLinkUtils.incrementClicks(shortLink);
-        }
         return resultLink;
+    }
+
+    public void incrementClicks(String shortLink) {
+        ShortLink link = shortLinkRepository.findByShortLink(shortLink);
+        link.setClicks(link.getClicks() + 1);
+        shortLinkRepository.save(link);
     }
 
     private ShortLinkDTO mapToDTO(final ShortLink shortLink, final ShortLinkDTO shortLinkDTO) {
