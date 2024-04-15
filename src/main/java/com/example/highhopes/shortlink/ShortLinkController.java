@@ -11,11 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
@@ -27,7 +23,7 @@ public class ShortLinkController {
     private final UserRepository userRepository;
 
     public ShortLinkController(final ShortLinkService shortLinkService,
-            final UserRepository userRepository) {
+                               final UserRepository userRepository) {
         this.shortLinkService = shortLinkService;
         this.userRepository = userRepository;
     }
@@ -45,17 +41,6 @@ public class ShortLinkController {
         return "shortLink/list";
     }
 
-    @GetMapping("/{shortLink}")
-    public String redirectToOriginalUrl(@PathVariable String shortLink, HttpServletRequest request,
-                                        HttpServletResponse httpServletResponse) {
-        String originalUrlCookie = shortLinkService.findCookie(request, shortLink);
-        if (originalUrlCookie.equals("Not found")) {
-            String originalUrl = shortLinkService.getOriginalUrl(httpServletResponse, shortLink);
-            return "redirect:" + originalUrl;
-        }
-        return "redirect:" + originalUrlCookie;
-    }
-
     @GetMapping("/add")
     public String add(@ModelAttribute("shortLink") final ShortLinkDTO shortLinkDTO) {
         return "shortLink/add";
@@ -63,7 +48,7 @@ public class ShortLinkController {
 
     @PostMapping("/add")
     public String add(@ModelAttribute("shortLink") @Valid final ShortLinkDTO shortLinkDTO,
-            final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
+                      final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "shortLink/add";
         }
@@ -80,8 +65,8 @@ public class ShortLinkController {
 
     @PostMapping("/edit/{id}")
     public String edit(@PathVariable(name = "id") final Long id,
-            @ModelAttribute("shortLink") @Valid final ShortLinkDTO shortLinkDTO,
-            final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
+                       @ModelAttribute("shortLink") @Valid final ShortLinkDTO shortLinkDTO,
+                       final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "shortLink/edit";
         }
@@ -92,10 +77,16 @@ public class ShortLinkController {
 
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable(name = "id") final Long id,
-            final RedirectAttributes redirectAttributes) {
+                         final RedirectAttributes redirectAttributes) {
         shortLinkService.delete(id);
         redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("shortLink.delete.success"));
         return "redirect:/shortLinks";
     }
 
+    @GetMapping("/{shortLink}")
+    public String redirectToOriginalUrl(@PathVariable String shortLink, HttpServletRequest request,
+                                        HttpServletResponse response) {
+        String originalUrl = shortLinkService.getOriginalUrl(shortLink, request, response);
+        return "redirect:" + originalUrl;
+    }
 }

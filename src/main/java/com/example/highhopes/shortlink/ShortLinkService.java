@@ -3,7 +3,7 @@ package com.example.highhopes.shortlink;
 import com.example.highhopes.user.User;
 import com.example.highhopes.user.UserRepository;
 import com.example.highhopes.utils.NotFoundException;
-import jakarta.servlet.http.Cookie;
+import com.example.highhopes.utils.ShortLinkUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Sort;
@@ -12,7 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +21,8 @@ public class ShortLinkService {
 
     private final ShortLinkRepository shortLinkRepository;
     private final UserRepository userRepository;
+
+    private ShortLinkUtils shortLinkUtils;
     private static final String USER_NOT_FOUND = "User not found with username: ";
 
     public ShortLinkService(final ShortLinkRepository shortLinkRepository,
@@ -60,35 +61,23 @@ public class ShortLinkService {
         shortLinkRepository.deleteById(id);
     }
 
-    public String getOriginalUrl(HttpServletResponse response, String shortLink) {
-        ShortLink link = shortLinkRepository.findByShortLink(shortLink);
-        if (link != null) {
-            Cookie cookie = new Cookie(shortLink, link.getOriginalUrl());
-            cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
-            cookie.setPath("/");
-            response.addCookie(cookie);
-
-            link.setClicks(link.getClicks() + 1);
-            shortLinkRepository.save(link);
-
-            return link.getOriginalUrl();
-        } else {
-            return "short link not found";
-        }
-    }
-
-    public String findCookie(HttpServletRequest request, String shortLink) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            Optional<Cookie> originalUrlCookie = Arrays.stream(cookies)
-                    .filter(cookie -> cookie.getName().equals(shortLink))
-                    .findFirst();
-
-            if (originalUrlCookie.isPresent()) {
-                return originalUrlCookie.get().getValue();
+    public String getOriginalUrl(String shortLink, HttpServletRequest request, HttpServletResponse response) {
+        String resultLink = "Short link not found";
+        String linkCookie = shortLinkUtils.findCookie(request, shortLink);
+        if (linkCookie.equals("Not found")) {
+            ShortLink linkDb = shortLinkRepository.findByShortLink(shortLink);
+            if (linkDb != null) {
+                response.addCookie(shortLinkUtils.createCookie(shortLink,linkDb.getOriginalUrl()));
+                resultLink = linkDb.getOriginalUrl();
             }
+        } else {
+            resultLink = linkCookie;
         }
-        return "Not found";
+
+        if (!resultLink.equals("Short link not found")) {
+            shortLinkUtils.incrementClicks(shortLink);
+        }
+        return resultLink;
     }
 
     private ShortLinkDTO mapToDTO(final ShortLink shortLink, final ShortLinkDTO shortLinkDTO) {
