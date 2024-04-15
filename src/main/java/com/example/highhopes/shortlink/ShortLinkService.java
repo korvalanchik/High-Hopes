@@ -80,7 +80,7 @@ public class ShortLinkService {
             User user = userOptional.get();
             shortLink.setUser(user);
         } else {
-            throw new UsernameNotFoundException(USER_NOT_FOUND + currentUsername);
+            throw new NotFoundException(USER_NOT_FOUND + currentUsername);
         }
 
         shortLink.setId(shortLinkDTO.getId());

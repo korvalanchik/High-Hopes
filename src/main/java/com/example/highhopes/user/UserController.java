@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.OffsetDateTime;
+
 
 @Controller
 @RequestMapping("/users")
@@ -59,6 +61,7 @@ public class UserController {
         if (bindingResult.hasErrors()) {
             return "user/edit";
         }
+        userDTO.setLastUpdated(OffsetDateTime.now());
         userService.update(id, userDTO);
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("user.update.success"));
         return "redirect:/users";

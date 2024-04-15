@@ -4,6 +4,8 @@ import com.example.highhopes.shortlink.ShortLink;
 import com.example.highhopes.shortlink.ShortLinkRepository;
 import com.example.highhopes.utils.NotFoundException;
 import com.example.highhopes.utils.ReferencedWarning;
+
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -55,12 +57,15 @@ public class UserService {
         userDTO.setId(user.getId());
         userDTO.setUsername(user.getUsername());
         userDTO.setPassword(user.getPassword());
+        userDTO.setDateCreated(user.getDateCreated());
         return userDTO;
     }
 
     private User mapToEntity(final UserDTO userDTO, final User user) {
         user.setUsername(userDTO.getUsername());
         user.setPassword(userDTO.getPassword());
+        user.setDateCreated(OffsetDateTime.now());
+        user.setLastUpdated(OffsetDateTime.now());
         return user;
     }
 

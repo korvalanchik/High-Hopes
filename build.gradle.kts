@@ -26,11 +26,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-rest")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("io.swagger.core.v3:swagger-annotations:2.2.21")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
+    implementation("org.springdoc:springdoc-openapi-ui:1.8.0")
+
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("io.jsonwebtoken:jjwt:0.12.5")
     implementation("org.webjars:bootstrap:5.3.3")

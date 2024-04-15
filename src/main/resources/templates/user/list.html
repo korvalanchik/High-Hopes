@@ -20,6 +20,7 @@
                             <th scope="col">[[#{user.id.label}]]</th>
                             <th scope="col">[[#{user.username.label}]]</th>
                             <th scope="col">[[#{user.password.label}]]</th>
+                            <th scope="col">[[#{user.creationDate.label}]]</th>
                             <th><!-- --></th>
                         </tr>
                     </thead>
@@ -28,6 +29,8 @@
                             <td>[[${user.id}]]</td>
                             <td>[[${user.username}]]</td>
                             <td>[[${user.password}]]</td>
+                            <td>[[${user.dateCreated}]]</td>
+
                             <td>
                                 <div class="float-end text-nowrap">
                                     <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-sm btn-secondary">[[#{user.list.edit}]]</a>
