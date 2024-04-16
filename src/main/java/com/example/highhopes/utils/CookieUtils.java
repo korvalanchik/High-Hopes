@@ -23,7 +23,7 @@ public class CookieUtils {
 
     public Cookie createCookie(String name, String value) {
         Cookie cookie = new Cookie(name, value);
-        cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+        cookie.setMaxAge(24 * 60 * 60);
         cookie.setPath("/");
         return cookie;
     }

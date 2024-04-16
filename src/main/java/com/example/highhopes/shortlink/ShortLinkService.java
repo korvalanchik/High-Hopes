@@ -15,7 +15,7 @@ public class ShortLinkService {
     }
 
     public String getOriginalUrl(String shortLink, HttpServletRequest request, HttpServletResponse response) {
-        String resultLink = "Short link not found";
+        String resultLink = "link not found";
         String linkCookie = cookieUtils.findCookie(request, shortLink);
         if (linkCookie.equals("Not found")) {
             ShortLink linkDb = shortLinkRepository.findByShortLink(shortLink);
