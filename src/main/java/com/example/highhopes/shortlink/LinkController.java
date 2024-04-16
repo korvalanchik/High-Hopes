@@ -36,18 +36,6 @@ public class LinkController {
         return new ResponseEntity<>(links, HttpStatus.OK);
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<?> getInfo() {
-
-        Map<String, Object> response = new HashMap<>();
-
-        response.put("error", "id = " + getUserId());
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(response);
-    }
-
 
     @PostMapping()
     public ResponseEntity<?> createLink(@RequestBody String url) {
