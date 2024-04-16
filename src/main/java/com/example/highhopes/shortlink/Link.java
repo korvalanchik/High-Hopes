@@ -2,17 +2,15 @@ package com.example.highhopes.shortlink;
 
 import com.example.highhopes.user.User;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.OffsetDateTime;
 
 
 @Entity
 @Table(name = "short_links")
-@Getter
-@Setter
-public class ShortLink {
+@Data
+public class Link {
 
     @Id
     @SequenceGenerator(

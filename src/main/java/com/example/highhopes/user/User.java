@@ -1,9 +1,8 @@
 package com.example.highhopes.user;
 
-import com.example.highhopes.shortlink.ShortLink;
+import com.example.highhopes.shortlink.Link;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,8 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
-@Getter
-@Setter
+@Data
 public class User {
 
     @Id
@@ -40,7 +38,7 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user")
-    private Set<ShortLink> shortLinks;
+    private Set<Link> shortLinks;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
