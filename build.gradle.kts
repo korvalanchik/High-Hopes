@@ -36,6 +36,8 @@ dependencies {
     implementation("org.webjars:bootstrap:5.3.3")
     implementation("org.flywaydb:flyway-core")
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
+    implementation("org.springframework.security:spring-security-oauth2-jose:6.2.3")
+    implementation("org.springframework.security:spring-security-oauth2-resource-server:6.2.3")
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("com.h2database:h2")
     annotationProcessor("org.projectlombok:lombok")
