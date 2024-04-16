@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -49,7 +50,7 @@ public class LinkController {
 
 
     @PostMapping()
-    public ResponseEntity<?> createLinkTest(@RequestBody String url) {
+    public ResponseEntity<?> createLink(@RequestBody String url) {
         Map<String, Object> response = new HashMap<>();
 
         if (!checkLink(url)) {
@@ -59,7 +60,9 @@ public class LinkController {
                     .body(response);
         }
 
-        String shortURL = "http://localhost:8080/" + generateURL(8);
+        String shortURL =
+                ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() +
+                      "/" +  generateURL(8);
         addLink(url,shortURL);
 
         response.put("error", "ok");
