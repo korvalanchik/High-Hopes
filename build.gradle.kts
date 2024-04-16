@@ -41,8 +41,15 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
+
+    implementation("org.springdoc:springdoc-openapi-ui:1.8.0") // Dependency for OpenApi 3.0
+    implementation("org.postgresql:postgresql") // PostgreSQL JDBC driver
+    testImplementation("org.mockito:mockito-core:3.12.4") // Dependency for Mockito
+
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+
