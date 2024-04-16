@@ -17,23 +17,21 @@ public class ShortLinkService {
     public String getOriginalUrl(String shortLink, HttpServletRequest request, HttpServletResponse response) {
         String resultLink = "link not found";
         String linkCookie = cookieUtils.findCookie(request, shortLink);
+        ShortLink link = shortLinkRepository.findByShortLink(shortLink);
         if (linkCookie.equals("Not found")) {
-            ShortLink linkDb = shortLinkRepository.findByShortLink(shortLink);
-            if (linkDb != null) {
-                response.addCookie(cookieUtils.createCookie(shortLink, linkDb.getOriginalUrl()));
-                linkDb.setClicks(linkDb.getClicks() + 1);
-                shortLinkRepository.save(linkDb);
-                resultLink = linkDb.getOriginalUrl();
+            if (link != null) {
+                response.addCookie(cookieUtils.createCookie(shortLink, link.getOriginalUrl()));
+                incrementClicks(link);
+                resultLink = link.getOriginalUrl();
             }
         } else {
-            incrementClicks(shortLink);
+            incrementClicks(link);
             resultLink = linkCookie;
         }
         return resultLink;
     }
 
-    private void incrementClicks(String shortLink) {
-        ShortLink link = shortLinkRepository.findByShortLink(shortLink);
+    private void incrementClicks(ShortLink link) {
         link.setClicks(link.getClicks() + 1);
         shortLinkRepository.save(link);
     }
