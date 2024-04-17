@@ -18,15 +18,14 @@ public class ShortLinkService {
         String resultLink = "link not found";
         String linkCookie = cookieUtils.findCookie(request, shortLink);
         ShortLink link = shortLinkRepository.findByShortLink(shortLink);
-        if (linkCookie.equals("Not found")) {
-            if (link != null) {
+        if (link != null) {
+            if (linkCookie.equals("Not found")) {
                 response.addCookie(cookieUtils.createCookie(shortLink, link.getOriginalUrl()));
-                incrementClicks(link);
                 resultLink = link.getOriginalUrl();
+            } else {
+                resultLink = linkCookie;
             }
-        } else {
             incrementClicks(link);
-            resultLink = linkCookie;
         }
         return resultLink;
     }

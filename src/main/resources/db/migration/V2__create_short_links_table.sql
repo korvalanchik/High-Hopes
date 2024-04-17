@@ -12,3 +12,9 @@ CREATE TABLE short_links (
      clicks INT NOT NULL,
      FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+INSERT INTO short_links (id, user_id, original_url, short_url, creation_date, expiry_date, status, clicks)
+VALUES
+(1, 1, 'https://docs.google.com/document/d/1xGYwCQuMeSyU4cHf4EvGdzRn0T9VKyVQ0Wgl3hcrMp0/edit', 'abc123', '2024-04-13 12:00:00', NULL, true, 0),
+(2, 2, 'https://docs.google.com/document/d/1CmvPkcy-fo49BqlTwnC_iYBhj5KSmItM2V9Ps6lLtnI/edit', 'def456', '2024-04-13 12:00:00', NULL, false, 0),
+(3, 3, 'https://docs.google.com/document/d/1CmvPkcy-fo49BqlTwnC_iYBhj5KSmItM2V9Ps6lLtnI/edit', 'ghi789', '2024-04-13 12:00:00', NULL, true, 0);
