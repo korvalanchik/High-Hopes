@@ -1,8 +1,8 @@
-version: "3.8"
+version: "4"
 
 services:
   postgresdb:
-    image: postgres
+    image: postgres:15
     restart: unless-stopped
     env_file: ./.env
     environment:
@@ -13,7 +13,6 @@ services:
       - $POSTGRESDB_LOCAL_PORT:$POSTGRESDB_DOCKER_PORT
 
   app:
-    image: highhopes-image:latest
     depends_on:
       - postgresdb
     build: .

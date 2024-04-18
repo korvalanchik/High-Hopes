@@ -22,3 +22,5 @@ java -jar High-Hopes-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
 docker-compose up
 
 # Removing containers
+
+docker-compose down
