@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h1 class="mb-4">URL Shortener</h1>
+    <div class="mb-3">
+        <label for="username" class="form-label">Username:</label>
+        <input type="text" class="form-control" id="username" name="username">
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password:</label>
+        <input type="password" class="form-control" id="password" name="password">
+    </div>
+    <div class="mb-3">
+        <button onclick="login()" class="btn btn-primary">Login</button>
+    </div>
+    <div id="shortUrlContainer" class="mb-3" style="display: none;">
+        <label for="longUrl" class="form-label">Long URL:</label>
+        <input type="text" class="form-control" id="longUrl" name="longUrl">
+        <button onclick="shortenUrl()" class="btn btn-primary mt-2">Shorten URL</button>
+    </div>
+    <div id="shortUrlResult" class="mb-3" style="display: none;">
+        <label for="shortUrl" class="form-label">Short URL:</label>
+        <input type="text" class="form-control" id="shortUrl" readonly>
+        <button onclick="copyShortUrl()" class="btn btn-primary mt-2">Copy</button>
+    </div>
+</div>
+
+<script>
+    let token = null;
+
+    async function login() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        try {
+            const response = await axios.post('/api/auth/login', { username, password });
+            token = response.data.token;
+            localStorage.setItem('token', token);
+            document.getElementById('shortUrlContainer').style.display = 'block';
+        } catch (error) {
+            console.error('Error logging in:', error.message);
+        }
+    }
+
+    async function shortenUrl() {
+        const longUrl = document.getElementById('longUrl').value;
+        const token = localStorage.getItem('token');
+
+        const data = {
+            id: 0,
+            userId: 0,
+            originalUrl: longUrl,
+            shortUrl: "",
+            creationDate: "",
+            expiryDate: "",
+            status: true,
+            clicks: 0,
+            user: 0
+        };
+
+        try {
+            const response = await axios.post('/api/shortLinks', data, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const shortUrl = response.data.shortUrl;
+            document.getElementById('shortUrl').value = shortUrl;
+            document.getElementById('shortUrlResult').style.display = 'block';
+        } catch (error) {
+            console.error('Error shortening URL:', error.message);
+        }
+    }
+
+    function copyShortUrl() {
+        const shortUrlInput = document.getElementById('shortUrl');
+        shortUrlInput.select();
+        shortUrlInput.setSelectionRange(0, 99999); /* For mobile devices */
+        document.execCommand('copy');
+        alert('Copied the short URL: ' + shortUrlInput.value);
+    }
+</script>
+</body>
+</html>

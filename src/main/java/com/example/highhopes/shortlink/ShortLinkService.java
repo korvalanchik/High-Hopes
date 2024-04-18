@@ -92,9 +92,9 @@ public class ShortLinkService {
         shortLink.setExpiryDate(shortLinkDTO.getExpiryDate());
         shortLink.setActive(shortLinkDTO.getStatus());
         shortLink.setClicks(shortLinkDTO.getClicks());
-        final User user = shortLinkDTO.getUser() == null ? null : userRepository.findById(shortLinkDTO.getUser())
-                .orElseThrow(() -> new NotFoundException("user not found"));
-        shortLink.setUser(user);
+//        final User user = shortLinkDTO.getUser() == null ? null : userRepository.findById(shortLinkDTO.getUser())
+//                .orElseThrow(() -> new NotFoundException("user not found"));
+//        shortLink.setUser(user);
         return shortLink;
     }
 
