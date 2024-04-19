@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -31,10 +32,12 @@ public class AuthenticationApi {
 
     private final UserDetailsService userDetailsService;
     private final JwtEncoder encoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthenticationApi(UserDetailsService userDetailsService, JwtEncoder encoder) {
+    public AuthenticationApi(UserDetailsService userDetailsService, JwtEncoder encoder, PasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
         this.encoder = encoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -50,7 +53,7 @@ public class AuthenticationApi {
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> login(@RequestBody User user) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-        if (user.getPassword().equalsIgnoreCase(userDetails.getPassword())) {
+        if (passwordEncoder.matches(user.getPassword(), userDetails.getPassword())) {
             String token = generateToken(userDetails);
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.set("X-AUTH-TOKEN", token);
