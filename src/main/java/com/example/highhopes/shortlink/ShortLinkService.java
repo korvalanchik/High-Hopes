@@ -14,20 +14,26 @@ public class ShortLinkService {
         this.shortLinkRepository = shortLinkRepository;
     }
 
-    public String getOriginalUrl(String shortLink, HttpServletRequest request, HttpServletResponse response) {
-        String resultLink = "link not found";
+    public GetOriginalUrlResponse getOriginalUrl(String shortLink, HttpServletRequest request,
+                                                 HttpServletResponse response) {
+        GetOriginalUrlResponse originalUrlResponse = new GetOriginalUrlResponse();
         String linkCookie = cookieUtils.findCookie(request, shortLink);
-        ShortLink link = shortLinkRepository.findByShortLink(shortLink);
-        if (link != null) {
+        ShortLink linkDb = shortLinkRepository.findByShortLink(shortLink);
+
+        if (linkDb != null) {
             if (linkCookie.equals("Not found")) {
-                response.addCookie(cookieUtils.createCookie(shortLink, link.getOriginalUrl()));
-                resultLink = link.getOriginalUrl();
+                response.addCookie(cookieUtils.createCookie(shortLink, linkDb.getOriginalUrl()));
+                originalUrlResponse.setOriginalUrl(linkDb.getOriginalUrl());
             } else {
-                resultLink = linkCookie;
+                originalUrlResponse.setOriginalUrl(linkCookie);
             }
-            incrementClicks(link);
+            originalUrlResponse.setError(GetOriginalUrlResponse.Error.OK);
+            incrementClicks(linkDb);
+        } else {
+            originalUrlResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_FOUND);
         }
-        return resultLink;
+
+        return originalUrlResponse;
     }
 
     private void incrementClicks(ShortLink link) {
