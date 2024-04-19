@@ -72,6 +72,7 @@ public class LinkController {
             }
         }
         return -1L;
+
     }
 
     private boolean checkLink(String url) {

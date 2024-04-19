@@ -50,6 +50,7 @@ public class Link {
     @PrePersist
     public void prePersist() {
         this.creationDate = OffsetDateTime.now();
+
     }
 
 }
