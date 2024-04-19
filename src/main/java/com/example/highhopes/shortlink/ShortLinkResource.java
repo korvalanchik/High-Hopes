@@ -1,6 +1,8 @@
 package com.example.highhopes.shortlink;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 import java.net.HttpURLConnection;
@@ -40,23 +42,6 @@ public class ShortLinkResource {
         return ResponseEntity.ok(shortLinkService.findAll());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ShortLinkDTO> getShortLink(@PathVariable(name = "id") final Long id) {
-        ShortLinkDTO shortLink = shortLinkService.get(id);
-        if (shortLink != null) {
-            return ResponseEntity.ok(shortLink);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-
-//    @PostMapping
-//    @ApiResponse(responseCode = "201")
-//    public ResponseEntity<Long> createShortLink(@RequestBody @Valid final ShortLinkDTO shortLinkDTO) {
-//        final Long createdId = shortLinkService.create(shortLinkDTO);
-//        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
-//    }
 
     @PostMapping()
     @ApiResponse(responseCode = "201")
@@ -115,9 +100,6 @@ public class ShortLinkResource {
         return sb.toString();
     }
 
-
-
-
     @PutMapping("/{id}")
     public ResponseEntity<Long> updateShortLink(@PathVariable(name = "id") final Long id,
             @RequestBody @Valid final ShortLinkDTO shortLinkDTO) {
@@ -132,4 +114,14 @@ public class ShortLinkResource {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/{shortLink}")
+    public ResponseEntity<GetOriginalUrlResponse> redirectToOriginalUrl(@PathVariable String shortLink,
+                                                                        HttpServletRequest request,
+                                                                        HttpServletResponse response) {
+        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortLink, request, response);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(originalUrl);
+    }
 }
