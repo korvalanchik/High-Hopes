@@ -31,6 +31,11 @@
         <input type="text" class="form-control" id="shortUrl" readonly>
         <button onclick="copyShortUrl()" class="btn btn-primary mt-2">Copy</button>
     </div>
+    <div class="mb-3">
+        <label for="shortUrlRedir" class="form-label">Short URL:</label>
+        <input type="text" class="form-control" id="shortUrlRedir" name="shortUrlRedir">
+        <button onclick="redirectToLongUrl()" class="btn btn-primary mt-2">Go</button>
+    </div>
 </div>
 
 <script>
@@ -84,6 +89,18 @@
         document.execCommand('copy');
         alert('Copied the short URL: ' + shortUrlInput.value);
     }
-</script>
+
+    async function redirectToLongUrl() {
+        const shortUrl = document.getElementById('shortUrlRedir').value;
+
+        try {
+            const response = await axios.get(`/api/shortLinks/${shortUrlRedir}`);
+            const longUrl = response.data.longUrl;
+            window.location.href = longUrl; // Виконуємо перенаправлення на довгий URL
+        } catch (error) {
+            console.error('Error redirecting to long URL:', error.message);
+            alert('Short URL not found');
+        }
+    }</script>
 </body>
 </html>
