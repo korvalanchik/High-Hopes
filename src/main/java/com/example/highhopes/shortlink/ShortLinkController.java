@@ -20,15 +20,10 @@ public class ShortLinkController {
     }
 
     @GetMapping()
-    public ResponseEntity<String> redirectToOriginalUrl(@PathVariable String shortLink, HttpServletRequest request,
-                                                HttpServletResponse response) {
-        String originalUrl = shortLinkService.getOriginalUrl(shortLink, request, response);
-
-        if (originalUrl.equals("link not found")) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(originalUrl);
-        }
+    public ResponseEntity<GetOriginalUrlResponse> redirectToOriginalUrl(@PathVariable String shortLink,
+                                                                        HttpServletRequest request,
+                                                                        HttpServletResponse response) {
+        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortLink, request, response);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
