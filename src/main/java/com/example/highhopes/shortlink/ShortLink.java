@@ -20,7 +20,7 @@ public class ShortLink {
             name = "primary_sequence",
             sequenceName = "primary_sequence",
             allocationSize = 1,
-            initialValue = 10000
+            initialValue = 10
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
