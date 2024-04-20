@@ -114,10 +114,31 @@ public class ShortLinkResource {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{shortLink}")
-    public ResponseEntity<GetOriginalUrlResponse> redirectToOriginalUrl(@PathVariable String shortLink,
+//    @GetMapping("/{shortLink}")
+//    public ResponseEntity<GetOriginalUrlResponse> redirectToOriginalUrl(@PathVariable String shortLink,
+//                                                                        HttpServletRequest request,
+//                                                                        HttpServletResponse response) {
+//        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortLink, request, response);
+//
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .body(originalUrl);
+//    }
+
+    @PostMapping("/redirect")
+    public ResponseEntity<GetOriginalUrlResponse> redirectToOriginalUrl(@RequestBody ShortLinkDTO shortLinkDTO,
                                                                         HttpServletRequest request,
                                                                         HttpServletResponse response) {
+        String shortLink = shortLinkDTO.getShortUrl();
+
+        if (shortLink == null || shortLink.isEmpty()) {
+            GetOriginalUrlResponse errorResponse = new GetOriginalUrlResponse();
+            errorResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(errorResponse);
+        }
+
         GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortLink, request, response);
 
         return ResponseEntity.status(HttpStatus.OK)
