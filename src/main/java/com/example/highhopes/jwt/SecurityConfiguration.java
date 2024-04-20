@@ -1,5 +1,6 @@
 package com.example.highhopes.jwt;
 
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.security.core.userdetails.User;
 import com.example.highhopes.user.UserRepository;
 import com.nimbusds.jose.jwk.JWK;

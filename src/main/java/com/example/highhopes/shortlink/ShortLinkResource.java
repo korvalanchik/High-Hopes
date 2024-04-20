@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -125,13 +126,12 @@ public class ShortLinkResource {
 //                .body(originalUrl);
 //    }
 
-    @PostMapping("/redirect")
-    public ResponseEntity<GetOriginalUrlResponse> redirectToOriginalUrl(@RequestBody ShortLinkDTO shortLinkDTO,
-                                                                        HttpServletRequest request,
-                                                                        HttpServletResponse response) {
-        String shortLink = shortLinkDTO.getShortUrl();
+    @Cacheable(value = "resolveUrlCache", key = "#request.shortUrl")
+    @PostMapping("/resolve")
+    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(@RequestBody ShortLinkDTO request) {
+        String shortUrl = request.getShortUrl();
 
-        if (shortLink == null || shortLink.isEmpty()) {
+        if (shortUrl == null || shortUrl.isEmpty()) {
             GetOriginalUrlResponse errorResponse = new GetOriginalUrlResponse();
             errorResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_FOUND);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -139,10 +139,11 @@ public class ShortLinkResource {
                     .body(errorResponse);
         }
 
-        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortLink, request, response);
+        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortUrl);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(originalUrl);
     }
+
 }

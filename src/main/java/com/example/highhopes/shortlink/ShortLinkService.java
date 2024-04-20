@@ -4,6 +4,8 @@ import com.example.highhopes.user.User;
 import com.example.highhopes.user.UserRepository;
 import com.example.highhopes.utils.CookieUtils;
 import com.example.highhopes.utils.NotFoundException;
+
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -93,7 +95,7 @@ public class ShortLinkService {
         shortLink.setOriginalUrl(shortLinkDTO.getOriginalUrl());
         shortLink.setShortUrl(shortLinkDTO.getShortUrl());
         shortLink.setCreationDate(shortLinkDTO.getCreationDate());
-        shortLink.setExpiryDate(shortLinkDTO.getExpiryDate());
+        shortLink.setExpiryDate(OffsetDateTime.now().plusDays(7));
         shortLink.setActive(shortLinkDTO.getStatus());
         shortLink.setClicks(shortLinkDTO.getClicks());
 //        final User user = shortLinkDTO.getUser() == null ? null : userRepository.findById(shortLinkDTO.getUser())
@@ -102,19 +104,12 @@ public class ShortLinkService {
         return shortLink;
     }
 
-    public GetOriginalUrlResponse getOriginalUrl(String shortLink, HttpServletRequest request,
-                                                 HttpServletResponse response) {
+    public GetOriginalUrlResponse getOriginalUrl(String shortUrl) {
         GetOriginalUrlResponse originalUrlResponse = new GetOriginalUrlResponse();
-        String linkCookie = cookieUtils.findCookie(request, shortLink);
-        ShortLink linkDb = shortLinkRepository.findByShortLink(shortLink);
+        ShortLink linkDb = shortLinkRepository.findByShortLink(shortUrl);
 
         if (linkDb != null) {
-            if (linkCookie.equals("Not found")) {
-                response.addCookie(cookieUtils.createCookie(shortLink, linkDb.getOriginalUrl()));
-                originalUrlResponse.setOriginalUrl(linkDb.getOriginalUrl());
-            } else {
-                originalUrlResponse.setOriginalUrl(linkCookie);
-            }
+            originalUrlResponse.setOriginalUrl(linkDb.getOriginalUrl());
             originalUrlResponse.setError(GetOriginalUrlResponse.Error.OK);
             incrementClicks(linkDb);
         } else {
