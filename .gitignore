@@ -1,8 +1,6 @@
 HELP.md
 .gradle
-build/*
-!build/libs/
-High-Hopes-0.0.1-SNAPSHOT-plain.jar
+build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/

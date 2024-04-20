@@ -1,11 +1,23 @@
-# Use the official Java 17 image with OpenJDK
-FROM openjdk:17-oracle
+# Stage 1: Set up the build environment
+FROM gradle:8.7-jdk17 AS builder
 
-# Switch to the /app working directory
+# Copy the application source code into the container
+COPY . /app
+
+# Set the working directory to /app
 WORKDIR /app
 
-# Copy the application JAR file into the container
-COPY build/libs/High-Hopes-0.0.1-SNAPSHOT.jar /app/highhopes.jar
+# Build the application
+RUN gradle build
 
-# Run the application upon container start
-CMD ["java", "-jar", "/app/highhopes.jar", "--spring.profiles.active=prod"]
+# Stage 2: Create the runtime image
+FROM openjdk:17-alpine
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the JAR file from the previous build stage
+COPY --from=builder /app/build/libs/High-Hopes-0.0.1-SNAPSHOT.jar /app/highhopes.jar
+
+# Run the application when the container starts
+CMD ["java", "-jar", "highhopes.jar", "--spring.profiles.active=prod"]
