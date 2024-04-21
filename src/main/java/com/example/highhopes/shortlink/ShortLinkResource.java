@@ -39,16 +39,16 @@ public class ShortLinkResource {
     }
 
     @GetMapping
-    public ResponseEntity<List<ShortLinkDTO>> getAllShortLinks() {
+    public ResponseEntity<List<ShortLinkDTO>> getAllUsersShortLinks() {
         return ResponseEntity.ok(shortLinkService.findAll());
     }
 
 
     @PostMapping()
     @ApiResponse(responseCode = "201")
-    public ResponseEntity<?> createLink(@RequestBody @Valid final ShortLinkDTO shortLinkDTO) {
+    public ResponseEntity<?> createLink(@RequestBody @Valid final ShortLinkCreateRequestDTO shortLinkCreateRequestDTO) {
         Map<String, Object> response = new HashMap<>();
-        String url = shortLinkDTO.getOriginalUrl();
+        String url = shortLinkCreateRequestDTO.getOriginalUrl();
         if (!checkLink(url)) {
             response.put("error", "Invalid URL");
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -56,12 +56,7 @@ public class ShortLinkResource {
                     .body(response);
         }
 
-        String shortURL =
-                ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() +
-                        "/" +  generateURL(8);
-//        addLink(url,shortURL);
-        shortLinkDTO.setShortUrl(shortURL);
-        shortLinkService.create(shortLinkDTO);
+        final String shortURL = shortLinkService.create(shortLinkCreateRequestDTO);
         response.put("error", "ok");
         response.put("short_url", shortURL);
 
@@ -88,18 +83,6 @@ public class ShortLinkResource {
     }
 
 
-    public static String generateURL(int length) {
-        String CHARACTERS = "abcdefghijklmnopqrstuvwxyz123456789";
-        Random RANDOM = new Random();
-
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            int randomIndex = RANDOM.nextInt(CHARACTERS.length());
-            char randomChar = CHARACTERS.charAt(randomIndex);
-            sb.append(randomChar);
-        }
-        return sb.toString();
-    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Long> updateShortLink(@PathVariable(name = "id") final Long id,
@@ -126,10 +109,9 @@ public class ShortLinkResource {
 //                .body(originalUrl);
 //    }
 
-    @Cacheable(value = "resolveUrlCache", key = "#request.shortUrl")
     @PostMapping("/resolve")
-    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(@RequestBody ShortLinkDTO request) {
-        String shortUrl = request.getShortUrl();
+    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(@RequestBody ShortLinkResolveRequestDTO shortLinkResolveRequestDTO) {
+        String shortUrl = shortLinkResolveRequestDTO.getShortUrl();
 
         if (shortUrl == null || shortUrl.isEmpty()) {
             GetOriginalUrlResponse errorResponse = new GetOriginalUrlResponse();
@@ -141,9 +123,26 @@ public class ShortLinkResource {
 
         GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortUrl);
 
+        shortLinkService.incrementClicks(shortUrl);
+
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(originalUrl);
     }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<ShortLinkDTO>> getActiveShortLinks() {
+        List<ShortLinkDTO> activeShortLinks = shortLinkService.getActiveShortLinks();
+        return ResponseEntity.ok(activeShortLinks);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ShortLinkDTO>> getAllShortLinks() {
+        List<ShortLinkDTO> allShortLinks = shortLinkService.getAllShortLinks();
+        return ResponseEntity.ok(allShortLinks);
+    }
+
+
+
 
 }

@@ -49,12 +49,12 @@ public class ShortLinkController {
     }
 
     @PostMapping("/add")
-    public String add(@ModelAttribute("shortLink") @Valid final ShortLinkDTO shortLinkDTO,
+    public String add(@ModelAttribute("shortLink") @Valid final ShortLinkCreateRequestDTO shortLinkCreateRequestDTO,
             final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "shortLink/add";
         }
-        shortLinkService.create(shortLinkDTO);
+        shortLinkService.create(shortLinkCreateRequestDTO);
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("shortLink.create.success"));
         return "redirect:/shortLinks";
     }

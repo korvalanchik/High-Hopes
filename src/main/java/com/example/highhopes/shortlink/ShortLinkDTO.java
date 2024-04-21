@@ -34,6 +34,6 @@ public class ShortLinkDTO {
 
     private Integer clicks;
 
-    private Long user;
+//    private Long user;
 
 }
