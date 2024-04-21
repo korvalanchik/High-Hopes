@@ -74,7 +74,7 @@
             const response = await axios.post('/api/shortLinks', data, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            const shortUrl = response.data.shortUrl;
+            const shortUrl = response.data.short_url;
             document.getElementById('shortUrl').value = shortUrl;
             document.getElementById('shortUrlResult').style.display = 'block';
         } catch (error) {
@@ -94,13 +94,16 @@
         const shortUrl = document.getElementById('shortUrlRedir').value;
 
         try {
-            const response = await axios.get(`/api/shortLinks/${shortUrlRedir}`);
-            const longUrl = response.data.longUrl;
-            window.location.href = longUrl; // Виконуємо перенаправлення на довгий URL
+            const response = await axios.post('/api/shortLinks/resolve', { shortUrl: shortUrl });
+            const longUrl = response.data.originalUrl;
+//            document.getElementById('longUrl').value = longUrl;
+            window.location.href = longUrl;
         } catch (error) {
             console.error('Error redirecting to long URL:', error.message);
             alert('Short URL not found');
         }
-    }</script>
+    }
+
+</script>
 </body>
 </html>
