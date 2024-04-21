@@ -6,8 +6,8 @@ CREATE TABLE short_links (
      user_id BIGINT NOT NULL,
      original_url VARCHAR(255) NOT NULL,
      short_url VARCHAR(255) UNIQUE NOT NULL,
-     creation_date TIMESTAMP WITH TIME ZONE NOT NULL,
-     expiry_date TIMESTAMP WITH TIME ZONE,
+     creation_date TIMESTAMP NOT NULL,
+     expiry_date TIMESTAMP,
      status BOOLEAN NOT NULL,
      clicks INT NOT NULL,
      FOREIGN KEY (user_id) REFERENCES users(id)
