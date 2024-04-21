@@ -36,18 +36,12 @@ dependencies {
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("io.jsonwebtoken:jjwt:0.12.5")
     implementation("org.webjars:bootstrap:5.3.3")
-//    implementation("org.flywaydb:flyway-core")
-//    implementation("org.flywaydb:flyway-core:7.15.0")
-    implementation("org.flywaydb:flyway-core:10.11.1")
-    implementation("org.flywaydb:flyway-mysql:10.11.1")
+    implementation("org.flywaydb:flyway-core")
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
     implementation("org.springframework.security:spring-security-oauth2-jose:6.2.3")
     implementation("org.springframework.security:spring-security-oauth2-resource-server:6.2.3")
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("com.h2database:h2")
-    implementation("com.mysql:mysql-connector-j:8.3.0")
-//    implementation("mysql:mysql-connector-java:8.0.33")
-    runtimeOnly("com.mysql:mysql-connector-j")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
@@ -56,8 +50,15 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
     testCompileOnly("org.projectlombok:lombok")
     testAnnotationProcessor("org.projectlombok:lombok")
+
+    implementation("org.springdoc:springdoc-openapi-ui:1.8.0") // Dependency for OpenApi 3.0
+    implementation("org.postgresql:postgresql") // PostgreSQL JDBC driver
+    testImplementation("org.mockito:mockito-core:3.12.4") // Dependency for Mockito
+
+
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
