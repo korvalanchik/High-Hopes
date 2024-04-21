@@ -4,6 +4,7 @@ import com.example.highhopes.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Formula;
 
 import java.time.OffsetDateTime;
 
@@ -45,7 +46,10 @@ public class ShortLink {
     private OffsetDateTime expiryDate;
 
     @Column(name = "status", nullable = false)
+    @Formula("(expiry_date IS NULL OR expiry_date >= CURRENT_TIMESTAMP)")
     private boolean active;
+//    @Column(name = "status", nullable = false)
+//    private boolean active;
 
     @Column(name = "clicks", nullable = false)
     private int clicks;
