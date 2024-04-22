@@ -5,7 +5,6 @@ import com.example.highhopes.user.UserRepository;
 import com.example.highhopes.utils.CookieUtils;
 import com.example.highhopes.utils.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
@@ -159,21 +158,14 @@ public class ShortLinkService {
 
 
 //    @Cacheable(value = "resolveUrlCache", key = "#shortUrl")
-    public GetOriginalUrlResponse getOriginalUrl(HttpServletRequest request, HttpServletResponse response) {
+    public GetOriginalUrlResponse getOriginalUrl(HttpServletRequest request) {
         GetOriginalUrlResponse originalUrlResponse = new GetOriginalUrlResponse();
 
         String requestUrl = String.valueOf(request.getRequestURL());
-        String nameCookie = requestUrl.substring(requestUrl.length() - 8);
-        String linkCookie = cookieUtils.findCookie(request, nameCookie);
         ShortLink shortLinkDb = shortLinkRepository.findByShortLink(requestUrl);
 
         if (shortLinkDb != null) {
-            if (linkCookie.equals("Not found")) {
-                response.addCookie(cookieUtils.createCookie(nameCookie, shortLinkDb.getOriginalUrl()));
-                originalUrlResponse.setOriginalUrl(shortLinkDb.getOriginalUrl());
-            } else {
-                originalUrlResponse.setOriginalUrl(linkCookie);
-            }
+            originalUrlResponse.setOriginalUrl(shortLinkDb.getOriginalUrl());
             originalUrlResponse.setError(GetOriginalUrlResponse.Error.OK);
             incrementClicks(shortLinkDb);
         } else {
@@ -181,7 +173,6 @@ public class ShortLinkService {
         }
 
         return originalUrlResponse;
-
     }
 
     private void incrementClicks(ShortLink link) {

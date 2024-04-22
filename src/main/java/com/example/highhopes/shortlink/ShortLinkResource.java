@@ -2,7 +2,6 @@ package com.example.highhopes.shortlink;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -119,9 +118,9 @@ public class ShortLinkResource {
 //    }
 
     @GetMapping("/resolve/**")
-    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(HttpServletRequest request) {
 
-        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(request, response);
+        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(request);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
