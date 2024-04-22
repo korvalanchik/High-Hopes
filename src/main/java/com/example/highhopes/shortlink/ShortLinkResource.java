@@ -1,7 +1,6 @@
 package com.example.highhopes.shortlink;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -85,17 +84,6 @@ public class ShortLinkResource {
         return ResponseEntity.noContent().build();
     }
 
-//    @GetMapping("/{shortLink}")
-//    public ResponseEntity<GetOriginalUrlResponse> redirectToOriginalUrl(@PathVariable String shortLink,
-//                                                                        HttpServletRequest request,
-//                                                                        HttpServletResponse response) {
-//        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortLink, request, response);
-//
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .body(originalUrl);
-//    }
-
 //    @PostMapping("/resolve")
 //    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(@RequestBody ShortLinkResolveRequestDTO shortLinkResolveRequestDTO) {
 //        String shortUrl = shortLinkResolveRequestDTO.getShortUrl();
@@ -116,17 +104,6 @@ public class ShortLinkResource {
 //                .contentType(MediaType.APPLICATION_JSON)
 //                .body(originalUrl);
 //    }
-
-    @GetMapping("/resolve/**")
-    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(HttpServletRequest request) {
-
-        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(request);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(originalUrl);
-    }
-
     @GetMapping("/active")
     public ResponseEntity<List<ShortLinkDTO>> getActiveShortLinks() {
         List<ShortLinkDTO> activeShortLinks = shortLinkService.getActiveShortLinks();

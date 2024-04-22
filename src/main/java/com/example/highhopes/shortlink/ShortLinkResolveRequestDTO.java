@@ -2,8 +2,7 @@
 //
 //import jakarta.validation.constraints.NotBlank;
 //import lombok.Data;
-//import org.springframework.context.ApplicationEvent;
-//
+////delete
 //@Data
 //public class ShortLinkResolveRequestDTO {
 //
