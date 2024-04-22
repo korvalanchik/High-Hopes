@@ -15,5 +15,6 @@ CREATE TABLE short_links (
 
 INSERT INTO short_links (id, user_id, original_url, short_url, creation_date, expiry_date, status, clicks)
 VALUES
-    (1, 2, 'https://app.slack.com/client/T060L949SJY/C06TVJGDCPK', 'http://localhost:8080/sl/abcd1234', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '1' MONTH, TRUE, 4),
-    (2, 1, 'https://app.slack.com/client/T060L949SJY/C060L94BZAQ', 'http://short.link/def456', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '1' MONTH, TRUE, 6);
+    (1, 1, 'https://app.slack.com/client/T060L949SJY/C06TVJGDCPK', 'http://localhost:8080/api/abcd1234', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '1' MONTH, TRUE, 4),
+    (2, 1, 'https://app.slack.com/client/T060L949SJY/C060L94BZAQ', 'http://localhost:8080/api/dcba9876', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '1' MONTH, FALSE, 6),
+    (3, 1, 'https://app.slack.com/client/T060L949SJY/C06F4SA1B55', 'http://localhost:8080/api/qwer4578', TIMESTAMP '2024-03-20 12:34:56', TIMESTAMP '2024-03-27 12:34:56', TRUE, 6);
