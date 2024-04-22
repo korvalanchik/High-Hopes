@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<h1>User Registration</h1>
+<form id="registrationForm">
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+    </div>
+    <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+    </div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+    <button type="submit">Register</button>
+</form>
+
+<script>
+    const registrationForm = document.getElementById('registrationForm');
+
+    registrationForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const formData = new FormData(registrationForm);
+        const registrationData = {
+            username: formData.get('username'),
+            email: formData.get('email'),
+            password: formData.get('password')
+        };
+
+        try {
+            const response = await axios.post('/api/auth/register', registrationData);
+            alert(response.data);
+        } catch (error) {
+            alert('Registration failed. Please try again.');
+            console.error('Error registering user:', error);
+        }
+    });
+</script>
+</body>
+</html>

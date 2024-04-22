@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-//@formatter:off
 @OpenAPIDefinition(
         info = @Info(title = "User API", version = "${api.version}",
                 contact = @Contact(name = "GoIt", email = "user@goit.com", url = "https://www.goit.com"),
@@ -22,18 +21,10 @@ import org.springframework.context.annotation.Configuration;
         servers = {
                 @Server(url = "http://localhost:8080", description = "Development"),
                 @Server(url = "${api.server.url}", description = "Production")})
-//@formatter:on
 public class OpenAPI30Configuration {
 
-    /**
-     * Configure the OpenAPI components.
-     *
-     * @return Returns fully configure OpenAPI object
-     * @see OpenAPI
-     */
     @Bean
     public OpenAPI customizeOpenAPI() {
-        //@formatter:off
         final String securitySchemeName = "bearerAuth";
         return new OpenAPI()
                 .addSecurityItem(new SecurityRequirement()
@@ -46,7 +37,5 @@ public class OpenAPI30Configuration {
                                 .description(
                                         "Provide the JWT token. JWT token can be obtained from the Login API. For testing, use the credentials <strong>john/password</strong>")
                                 .bearerFormat("JWT")));
-        //@formatter:on
-
     }
 }

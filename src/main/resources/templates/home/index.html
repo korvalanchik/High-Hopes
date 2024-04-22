@@ -10,18 +10,13 @@
             <h1 class="mb-4">[[#{home.index.headline}]]</h1>
             <p>[(#{home.index.text})]</p>
             <p class="mb-5">
+                <span>[[#{home.index.user}]]</span>
+                <a th:href="@{/index-user}" target="_blank">[[#{home.index.user.link}]]</a>.
                 <span>[[#{home.index.ui}]]</span>
                 <a th:href="@{/index-shortener}" target="_blank">[[#{home.index.ui.link}]]</a>.
                 <span>[[#{home.index.swagger}]]</span>
                 <a th:href="@{/swagger-ui-custom.html}" target="_blank">[[#{home.index.swagger.link}]]</a>.
             </p>
-            <div class="col-md-4 mb-5">
-                <h4 class="mb-3">[[#{home.index.exploreEntities}]]</h4>
-                <div class="list-group">
-                    <a th:href="@{/shortLinks}" class="list-group-item list-group-item-action">[[#{shortLink.list.headline}]]</a>
-                    <a th:href="@{/users}" class="list-group-item list-group-item-action">[[#{user.list.headline}]]</a>
-                </div>
-            </div>
         </div>
     </body>
 </html>
