@@ -158,7 +158,6 @@ public class ShortLinkService {
     }
 
 
-    //    @Cacheable(value = "resolveUrlCache", key = "#requestUrl")
     public GetOriginalUrlResponse getOriginalUrl(String shortLink,
                                                  HttpServletRequest request,
                                                  HttpServletResponse response) {
