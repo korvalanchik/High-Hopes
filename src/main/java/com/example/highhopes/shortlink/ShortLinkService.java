@@ -164,8 +164,8 @@ public class ShortLinkService {
         GetOriginalUrlResponse originalUrlResponse = new GetOriginalUrlResponse();
 
         String linkCookie = cookieUtils.findCookie(request, shortLink);
-//        ShortLink shortLinkDb = shortLinkRepository.findByShortLink("http://localhost:8080/sl/" + shortLink);
-        ShortLink shortLinkDb = shortLinkRepository.findByShortLink("http://highhopes-blackfox.koyeb.app" + shortLink);
+//        ShortLink shortLinkDb = shortLinkRepository.findByShortLink("http://localhost:8080/" + shortLink);
+        ShortLink shortLinkDb = shortLinkRepository.findByShortLink("http://highhopes-blackfox.koyeb.app/" + shortLink);
 
         if (shortLinkDb == null) {
             originalUrlResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_FOUND);
