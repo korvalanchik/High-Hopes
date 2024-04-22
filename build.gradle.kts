@@ -61,3 +61,37 @@ dependencies {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+// import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+//        plugins {
+//            java
+//            kotlin("jvm") version "1.5.21"
+//        }
+
+tasks {
+    val buildJarProd by creating(Jar::class) {
+        val resourcesDir = "src/main/resources"
+        from(resourcesDir) {
+            include("application-prod.properties")
+        }
+        archiveFileName.set("HH-prod.jar")
+        destinationDirectory.set(layout.buildDirectory.dir("jars/prod"))
+    }
+
+    val buildJarLocal by creating(Jar::class) {
+        val resourcesDir = "src/main/resources"
+        from(resourcesDir) {
+            include("application.properties")
+        }
+        archiveFileName.set("HH-local.jar")
+        destinationDirectory.set(layout.buildDirectory.dir("jars/local"))
+    }
+
+    // Configure compilation tasks if needed
+//    withType<KotlinCompile> {
+//        kotlinOptions {
+//            jvmTarget = "11"
+//        }
+//    }
+}
