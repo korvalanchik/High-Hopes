@@ -158,14 +158,14 @@ public class ShortLinkService {
     }
 
 
-    public GetOriginalUrlResponse getOriginalUrl(String shortLink,
+    public GetOriginalUrlResponse getOriginalUrl(String uniqueValueLink,
                                                  HttpServletRequest request,
                                                  HttpServletResponse response) {
         GetOriginalUrlResponse originalUrlResponse = new GetOriginalUrlResponse();
 
-        String linkCookie = cookieUtils.findCookie(request, shortLink);
-//        ShortLink shortLinkDb = shortLinkRepository.findByShortLink("http://localhost:8080/sl/" + shortLink);
-        ShortLink shortLinkDb = shortLinkRepository.findByShortLink("http://highhopes-blackfox.koyeb.app" + shortLink);
+        String linkCookie = cookieUtils.findCookie(request, uniqueValueLink);
+//        ShortLink shortLinkDb = shortLinkRepository.findByShortLink("http://localhost:8080/sl/" + uniqueValueLink);
+        ShortLink shortLinkDb = shortLinkRepository.findByShortLink("http://highhopes-blackfox.koyeb.app" + uniqueValueLink);
 
         if (shortLinkDb == null) {
             originalUrlResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_FOUND);
@@ -173,7 +173,7 @@ public class ShortLinkService {
         }
 
         if (linkCookie == null || linkCookie.equals("Not found")) {
-            response.addCookie(cookieUtils.createCookie(shortLink, shortLinkDb.getOriginalUrl()));
+            response.addCookie(cookieUtils.createCookie(uniqueValueLink, shortLinkDb.getOriginalUrl()));
             originalUrlResponse.setOriginalUrl(shortLinkDb.getOriginalUrl());
         } else {
             originalUrlResponse.setOriginalUrl(linkCookie);
