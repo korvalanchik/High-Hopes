@@ -159,14 +159,13 @@ public class ShortLinkService {
 
 
     //    @Cacheable(value = "resolveUrlCache", key = "#requestUrl")
-    public GetOriginalUrlResponse getOriginalUrl(HttpServletRequest request,
+    public GetOriginalUrlResponse getOriginalUrl(String shortLink,
+                                                 HttpServletRequest request,
                                                  HttpServletResponse response) {
         GetOriginalUrlResponse originalUrlResponse = new GetOriginalUrlResponse();
 
-        String requestUrl = String.valueOf(request.getRequestURL());
-        String nameCookie = requestUrl.substring(requestUrl.length() - 8);
-        String linkCookie = cookieUtils.findCookie(request, nameCookie);
-        ShortLink shortLinkDb = shortLinkRepository.findByShortLink(requestUrl);
+        String linkCookie = cookieUtils.findCookie(request, shortLink);
+        ShortLink shortLinkDb = shortLinkRepository.findByShortLink("http://localhost:8080/sl/" + shortLink);
 
         if (shortLinkDb == null) {
             originalUrlResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_FOUND);
@@ -174,7 +173,7 @@ public class ShortLinkService {
         }
 
         if (linkCookie == null || linkCookie.equals("Not found")) {
-            response.addCookie(cookieUtils.createCookie(nameCookie, shortLinkDb.getOriginalUrl()));
+            response.addCookie(cookieUtils.createCookie(shortLink, shortLinkDb.getOriginalUrl()));
             originalUrlResponse.setOriginalUrl(shortLinkDb.getOriginalUrl());
         } else {
             originalUrlResponse.setOriginalUrl(linkCookie);

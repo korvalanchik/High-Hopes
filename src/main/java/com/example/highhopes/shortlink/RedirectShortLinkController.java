@@ -6,11 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/sl/**")
+@RequestMapping("/sl")
 public class RedirectShortLinkController {
 
     private final ShortLinkService shortLinkService;
@@ -19,10 +20,12 @@ public class RedirectShortLinkController {
         this.shortLinkService = shortLinkService;
     }
 
-    @GetMapping
-    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/{shortLink}")
+    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(@PathVariable String shortLink,
+                                                                  HttpServletRequest request,
+                                                                  HttpServletResponse response) {
 
-        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(request, response);
+        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortLink, request, response);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
