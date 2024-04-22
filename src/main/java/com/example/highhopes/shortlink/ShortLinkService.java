@@ -165,6 +165,8 @@ public class ShortLinkService {
         if (linkDb != null) {
             if(!linkDb.getExpiryDate().isAfter(OffsetDateTime.now())){
                 originalUrlResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_ACTIVE);
+                linkDb.setActive(false);
+                shortLinkRepository.save(linkDb);
             }
             else{
                 originalUrlResponse.setOriginalUrl(linkDb.getOriginalUrl());
