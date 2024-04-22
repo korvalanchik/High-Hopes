@@ -163,8 +163,13 @@ public class ShortLinkService {
         ShortLink linkDb = shortLinkRepository.findByShortLink(shortUrl);
 
         if (linkDb != null) {
-            originalUrlResponse.setOriginalUrl(linkDb.getOriginalUrl());
-            originalUrlResponse.setError(GetOriginalUrlResponse.Error.OK);
+            if(!linkDb.getExpiryDate().isAfter(OffsetDateTime.now())){
+                originalUrlResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_ACTIVE);
+            }
+            else{
+                originalUrlResponse.setOriginalUrl(linkDb.getOriginalUrl());
+                originalUrlResponse.setError(GetOriginalUrlResponse.Error.OK);
+            }
 //            incrementClicks(linkDb);
         } else {
             originalUrlResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_FOUND);

@@ -9,6 +9,7 @@ public class GetOriginalUrlResponse {
 
     public enum Error {
         OK,
-        LINK_NOT_FOUND
+        LINK_NOT_FOUND,
+        LINK_NOT_ACTIVE
     }
 }
