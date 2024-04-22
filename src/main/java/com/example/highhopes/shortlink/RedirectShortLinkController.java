@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 public class RedirectShortLinkController {
 
     private final ShortLinkService shortLinkService;
@@ -21,7 +21,7 @@ public class RedirectShortLinkController {
     }
 
     @GetMapping("/{shortLink}")
-    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(@PathVariable String shortLink,
+    public ResponseEntity<GetOriginalUrlResponse> redirectShortUrl(@PathVariable String shortLink,
                                                                   HttpServletRequest request,
                                                                   HttpServletResponse response) {
 
