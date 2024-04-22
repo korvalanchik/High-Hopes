@@ -4,28 +4,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.time.OffsetDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -109,21 +97,31 @@ public class ShortLinkResource {
 //                .body(originalUrl);
 //    }
 
-    @PostMapping("/resolve")
-    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(@RequestBody ShortLinkResolveRequestDTO shortLinkResolveRequestDTO) {
-        String shortUrl = shortLinkResolveRequestDTO.getShortUrl();
+//    @PostMapping("/resolve")
+//    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(@RequestBody ShortLinkResolveRequestDTO shortLinkResolveRequestDTO) {
+//        String shortUrl = shortLinkResolveRequestDTO.getShortUrl();
+//
+//        if (shortUrl == null || shortUrl.isEmpty()) {
+//            GetOriginalUrlResponse errorResponse = new GetOriginalUrlResponse();
+//            errorResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_FOUND);
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .contentType(MediaType.APPLICATION_JSON)
+//                    .body(errorResponse);
+//        }
+//
+//        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortUrl);
+//
+//        shortLinkService.incrementClicks(shortUrl);
+//
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .body(originalUrl);
+//    }
 
-        if (shortUrl == null || shortUrl.isEmpty()) {
-            GetOriginalUrlResponse errorResponse = new GetOriginalUrlResponse();
-            errorResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_FOUND);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(errorResponse);
-        }
+    @GetMapping("/resolve/**")
+    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(HttpServletRequest request, HttpServletResponse response) {
 
-        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortUrl);
-
-        shortLinkService.incrementClicks(shortUrl);
+        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(request, response);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)

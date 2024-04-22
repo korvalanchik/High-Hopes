@@ -4,8 +4,9 @@ import com.example.highhopes.user.User;
 import com.example.highhopes.user.UserRepository;
 import com.example.highhopes.utils.CookieUtils;
 import com.example.highhopes.utils.NotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,7 +33,7 @@ public class ShortLinkService {
     private final CookieUtils cookieUtils = new CookieUtils();
 
     public ShortLinkService(final ShortLinkRepository shortLinkRepository,
-            final UserRepository userRepository) {
+                            final UserRepository userRepository) {
         this.shortLinkRepository = shortLinkRepository;
         this.userRepository = userRepository;
     }
@@ -132,7 +133,7 @@ public class ShortLinkService {
 
         String shortURL =
                 ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() +
-                        "/" +  generateURL(shortLinkLength);
+                        "/" + generateURL(shortLinkLength);
         shortLink.setShortUrl(shortURL);
 
         shortLink.setOriginalUrl(shortLinkCreateRequestDTO.getOriginalUrl());
@@ -157,28 +158,35 @@ public class ShortLinkService {
     }
 
 
-    @Cacheable(value = "resolveUrlCache", key = "#shortUrl")
-    public GetOriginalUrlResponse getOriginalUrl(String shortUrl) {
+//    @Cacheable(value = "resolveUrlCache", key = "#shortUrl")
+    public GetOriginalUrlResponse getOriginalUrl(HttpServletRequest request, HttpServletResponse response) {
         GetOriginalUrlResponse originalUrlResponse = new GetOriginalUrlResponse();
-        ShortLink linkDb = shortLinkRepository.findByShortLink(shortUrl);
 
-        if (linkDb != null) {
-            originalUrlResponse.setOriginalUrl(linkDb.getOriginalUrl());
+        String requestUrl = String.valueOf(request.getRequestURL());
+        String nameCookie = requestUrl.substring(requestUrl.length() - 8);
+        String linkCookie = cookieUtils.findCookie(request, nameCookie);
+        ShortLink shortLinkDb = shortLinkRepository.findByShortLink(requestUrl);
+
+        if (shortLinkDb != null) {
+            if (linkCookie.equals("Not found")) {
+                response.addCookie(cookieUtils.createCookie(nameCookie, shortLinkDb.getOriginalUrl()));
+                originalUrlResponse.setOriginalUrl(shortLinkDb.getOriginalUrl());
+            } else {
+                originalUrlResponse.setOriginalUrl(linkCookie);
+            }
             originalUrlResponse.setError(GetOriginalUrlResponse.Error.OK);
-//            incrementClicks(linkDb);
+            incrementClicks(shortLinkDb);
         } else {
             originalUrlResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_FOUND);
         }
 
         return originalUrlResponse;
+
     }
 
-    public void incrementClicks(String shortLink) {
-        ShortLink link = shortLinkRepository.findByShortLink(shortLink);
-        if(link != null) {
-            link.setClicks(link.getClicks() + 1);
-            shortLinkRepository.save(link);
-        }
+    private void incrementClicks(ShortLink link) {
+        link.setClicks(link.getClicks() + 1);
+        shortLinkRepository.save(link);
     }
 
     public List<ShortLinkDTO> getActiveShortLinks() {
