@@ -146,9 +146,9 @@ public class ShortLinkService {
         return sb.toString();
     }
 
-    public GetOriginalUrlResponse getOriginalUrl(String shortLink,
-                                                 HttpServletRequest request,
-                                                 HttpServletResponse response) {
+    public GetOriginalUrlResponse getOriginalUrlResponse(String shortLink,
+                                                         HttpServletRequest request,
+                                                         HttpServletResponse response) {
         String linkCookie = cookieUtils.findCookie(request, shortLink);
         String shortURL =
                 ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() +

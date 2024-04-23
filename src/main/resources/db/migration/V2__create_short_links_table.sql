@@ -17,4 +17,5 @@ INSERT INTO short_links (id, user_id, original_url, short_url, creation_date, ex
 VALUES
     (1, 2, 'https://app.slack.com/client/T060L949SJY/C06TVJGDCPK', 'http://localhost:8080/api/sl/abcd1234', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '1' MONTH, TRUE, 4),
     (2, 1, 'https://app.slack.com/client/T060L949SJY/C060L94BZAQ', 'http://localhost:8080/api/sl/def456', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '1' MONTH, TRUE, 6),
-    (3, 1, 'https://app.slack.com/client/T060L949SJY/C06F4SA1B55', 'http://localhost:8080/api/sl/qwe457', TIMESTAMP '2024-03-20 12:34:56', TIMESTAMP '2024-03-27 12:34:56', TRUE, 6);
+    (3, 1, 'https://app.slack.com/client/T060L949SJY/C06F4SA1B55', 'http://localhost:8080/api/sl/qwe457', TIMESTAMP '2024-03-20 12:34:56', TIMESTAMP '2024-03-27 12:34:56', TRUE, 6),
+    (4, 3, 'https://app.slack.com/client/T060L949SJY/C060L94BZAQ', 'http://localhost:8080/api/sl/fdgg344', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '1' MONTH, FALSE, 4);

@@ -39,7 +39,7 @@ class ShortLinkServiceTest {
 
         String validLink = "abcd1234";
 
-        originalUrlResponse = shortLinkService.getOriginalUrl(validLink, request, response);
+        originalUrlResponse = shortLinkService.getOriginalUrlResponse(validLink, request, response);
         assertEquals(originalUrlResponse, validResponse);
     }
 }

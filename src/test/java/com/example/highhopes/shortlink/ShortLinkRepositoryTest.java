@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -21,8 +23,39 @@ class ShortLinkRepositoryTest {
 
     @Test
     void testFindByShortLinkWhenShortLinkInvalid() {
-        String invalidLink = "http://localhost:8080/api/afcd1234";
+        String invalidLink = "http://localhost:8080/api/sl/qwefdf457";
         ShortLink notFound = shortLinkRepository.findByShortLink(invalidLink);
         assertThat(notFound).isNull();
+    }
+
+    @Test
+    void testFindByOriginalLinkWhenLinkValid() {
+        String link = "http://localhost:8080/api/sl/abcd1234";
+        ShortLink found = shortLinkRepository.findByShortLink(link);
+        assertThat(found.getShortUrl()).isEqualTo(link);
+    }
+    @Test
+    void testFindByOriginalLinkWhenLinkInvalid() {
+        String invalidLink = "http://localhost:8080/afcd1234";
+        ShortLink notFound = shortLinkRepository.findByOriginalLink(invalidLink);
+        assertThat(notFound).isNull();
+    }
+
+    @Test
+    void testFindAllActiveShortLinksValid() {
+        Long numberShortLink = 2L;
+        String validLinkOne = "http://localhost:8080/api/sl/def456";
+        String validLinkTwo = "http://localhost:8080/api/sl/qwe457";
+        List<ShortLink> shortLinks = shortLinkRepository.findAllActiveShortLinks(1L);
+        assertThat(numberShortLink).isEqualTo(shortLinks.size());
+        assertThat(shortLinks.get(0).getShortUrl()).isEqualTo(validLinkOne);
+        assertThat(shortLinks.get(1).getShortUrl()).isEqualTo(validLinkTwo);
+    }
+
+    @Test
+    void testFindAllActiveShortLinksInvalid() {
+        Long numberShortLinkValid = 0L;
+        List<ShortLink> shortLinks = shortLinkRepository.findAllActiveShortLinks(3L);
+        assertThat(numberShortLinkValid).isEqualTo(shortLinks.size());
     }
 }
