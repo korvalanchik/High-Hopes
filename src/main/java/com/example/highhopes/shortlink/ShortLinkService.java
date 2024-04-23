@@ -122,7 +122,7 @@ public class ShortLinkService {
 
         String shortURL =
                 ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() +
-                        "/api/" + generateURL(shortLinkLength);
+                        "/api/sl/" + generateURL(shortLinkLength);
         shortLink.setShortUrl(shortURL);
 
         shortLink.setOriginalUrl(shortLinkCreateRequestDTO.getOriginalUrl());
@@ -152,7 +152,7 @@ public class ShortLinkService {
         String linkCookie = cookieUtils.findCookie(request, shortLink);
         String shortURL =
                 ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() +
-                        "/api/" + shortLink;
+                        "/api/sl/" + shortLink;
         ShortLink shortLinkDb = shortLinkRepository.findByShortLink(shortURL);
 
         GetOriginalUrlResponse originalUrlResponse = handleShortLink(shortLinkDb);
