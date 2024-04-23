@@ -54,8 +54,14 @@ public class UserResource {
             response.put("error", "Invalid password. It must be at least 8 characters long and contain at least one digit, one uppercase letter, and one lowercase letter");
             return ResponseEntity.status(HttpStatus.ACCEPTED).contentType(MediaType.APPLICATION_JSON).body(response);
         }
+        if (!userService.isUsernameUnique(userDTO.getUsername())) {
+            response.put("error", "Username is already taken");
+            return ResponseEntity.status(HttpStatus.ACCEPTED).contentType(MediaType.APPLICATION_JSON).body(response);
+        }
+
+        response.put("error", "Ok");
         final Long createdId = userService.create(userDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(response);
     }
 
     @PutMapping("/{id}")

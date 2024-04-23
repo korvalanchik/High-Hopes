@@ -3,8 +3,8 @@ package com.example.highhopes.service;
 import java.util.Map;
 
 public class UrlShortenerServiceImpl implements UrlShortenerService {
-    private Map<String, String> database; // Database for links
-    private Map<String, Integer> statistics; // Database for Statistics
+    private Map<String, String> database;
+    private Map<String, Integer> statistics;
 
     @Override
     public Map<String, Integer> viewActiveLinksStatistics() {

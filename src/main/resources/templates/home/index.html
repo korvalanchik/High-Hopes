@@ -6,17 +6,17 @@
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
     </head>
     <body>
-        <div layout:fragment="content">
-            <h1 class="mb-4">[[#{home.index.headline}]]</h1>
-            <p>[(#{home.index.text})]</p>
-            <p class="mb-5">
-                <span>[[#{home.index.user}]]</span>
-                <a th:href="@{/index-user}" target="_blank">[[#{home.index.user.link}]]</a>.
-                <span>[[#{home.index.ui}]]</span>
-                <a th:href="@{/index-shortener}" target="_blank">[[#{home.index.ui.link}]]</a>.
-                <span>[[#{home.index.swagger}]]</span>
-                <a th:href="@{/swagger-ui-custom.html}" target="_blank">[[#{home.index.swagger.link}]]</a>.
-            </p>
-        </div>
+    <div layout:fragment="content" class="container mt-5">
+        <h1 class="mb-4">[[#{home.index.headline}]]</h1>
+        <p>[(#{home.index.text})]</p>
+        <p class="mb-5">
+            <span class="fw-bold">[[#{home.index.user}]]</span>
+            <a th:href="@{/index-user}" target="_blank" class="btn btn-primary btn-sm">[[#{home.index.user.link}]]</a>
+            <span class="fw-bold">[[#{home.index.ui}]]</span>
+            <a th:href="@{/index-shortener}" target="_blank" class="btn btn-primary btn-sm">[[#{home.index.ui.link}]]</a>
+            <span class="fw-bold">[[#{home.index.swagger}]]</span>
+            <a th:href="@{/swagger-ui-custom.html}" target="_blank" class="btn btn-primary btn-sm">[[#{home.index.swagger.link}]]</a>
+        </p>
+    </div>
     </body>
 </html>

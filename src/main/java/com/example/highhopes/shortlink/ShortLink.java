@@ -48,8 +48,6 @@ public class ShortLink {
     @Column(name = "status", nullable = false)
     @Formula("(expiry_date IS NULL OR expiry_date >= CURRENT_TIMESTAMP)")
     private boolean active;
-//    @Column(name = "status", nullable = false)
-//    private boolean active;
 
     @Column(name = "clicks", nullable = false)
     private int clicks;

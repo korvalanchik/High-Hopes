@@ -23,7 +23,6 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-//    implementation("org.springframework.boot:spring-boot-starter-data-rest")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
@@ -32,12 +31,9 @@ dependencies {
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("net.sf.ehcache:ehcache:2.10.9.2")
-//    implementation("org.springdoc:springdoc-openapi-ui:1.8.0")
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("io.jsonwebtoken:jjwt:0.12.5")
     implementation("org.webjars:bootstrap:5.3.3")
-//    implementation("org.flywaydb:flyway-core")
-//    implementation("org.flywaydb:flyway-core:7.15.0")
     implementation("org.flywaydb:flyway-core:10.11.1")
     implementation("org.flywaydb:flyway-mysql:10.11.1")
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
@@ -46,7 +42,6 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("com.h2database:h2")
     implementation("com.mysql:mysql-connector-j:8.3.0")
-//    implementation("mysql:mysql-connector-java:8.0.33")
     runtimeOnly("com.mysql:mysql-connector-j")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -61,13 +56,6 @@ dependencies {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
-
-// import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-//        plugins {
-//            java
-//            kotlin("jvm") version "1.5.21"
-//        }
 
 tasks {
     val buildJarProd by creating(Jar::class) {
@@ -88,10 +76,4 @@ tasks {
         destinationDirectory.set(layout.buildDirectory.dir("jars/local"))
     }
 
-    // Configure compilation tasks if needed
-//    withType<KotlinCompile> {
-//        kotlinOptions {
-//            jvmTarget = "11"
-//        }
-//    }
 }

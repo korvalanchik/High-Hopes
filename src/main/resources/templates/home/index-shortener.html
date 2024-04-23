@@ -118,6 +118,8 @@
             const longUrl = response.data.originalUrl;
             document.getElementById('longUrl').value = longUrl;
             window.open(longUrl, '_blank');
+            getUserStatistics();
+            getActiveUserStatistics();
         } catch (error) {
             console.error('Error redirecting to long URL:', error.message);
             alert('Short URL not found');

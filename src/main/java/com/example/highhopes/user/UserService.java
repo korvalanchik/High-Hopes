@@ -7,6 +7,8 @@ import com.example.highhopes.utils.ReferencedWarning;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -83,6 +85,11 @@ public class UserService {
             return referencedWarning;
         }
         return null;
+    }
+
+    public boolean isUsernameUnique(String username) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        return userOptional.isEmpty();
     }
 
 }

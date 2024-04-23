@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -15,7 +16,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-//@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 public class User {
@@ -53,6 +53,12 @@ public class User {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+    public User(long l, String user1, String password1) {
+    }
+
+    public User() {
+
+    }
 
     @PreUpdate
     public void preUpdate() {

@@ -18,4 +18,9 @@ public class HomeController {
     public String indexShortener() {
         return "home/index-shortener";
     }
+
+    @GetMapping("/index-user")
+    public String indexUser() {
+        return "home/index-user";
+    }
 }
