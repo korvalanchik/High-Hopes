@@ -1,7 +1,8 @@
 package com.example.highhopes.shortlink;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -90,20 +91,13 @@ public class ShortLinkResource {
     }
 
     @PostMapping("/resolve")
-    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(@RequestBody ShortLinkResolveRequestDTO shortLinkResolveRequestDTO) {
+    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(@RequestBody ShortLinkResolveRequestDTO shortLinkResolveRequestDTO,
+                                                                  HttpServletRequest request,
+                                                                  HttpServletResponse response) {
         String shortUrl = shortLinkResolveRequestDTO.getShortUrl();
+        shortUrl = shortUrl.substring(shortUrl.length() - 8);
 
-        if (shortUrl == null || shortUrl.isEmpty()) {
-            GetOriginalUrlResponse errorResponse = new GetOriginalUrlResponse();
-            errorResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_FOUND);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(errorResponse);
-        }
-
-        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortUrl);
-
-        shortLinkService.incrementClicks(shortUrl);
+        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortUrl, request, response);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)

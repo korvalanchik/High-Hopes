@@ -58,15 +58,13 @@ public class SecurityConfiguration  extends GlobalAuthenticationConfigurerAdapte
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder);
+        authenticationManagerBuilder.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder);        //@formatter:off
         return http
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
 
-                        .requestMatchers("/api/auth/**", "/swagger-ui-custom.html" ,"/swagger-ui.html",
-                                "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**",
-                                "/swagger-ui/index.html","/api-docs/**", "/api/users", "/api/shortLinks",
-                                "/index-shortener", "/css/**", "/images/**", "/favicon.ico", "/js/**",
-                                "/index-user", "/", "/api/shortLinks/resolve")
+                        .requestMatchers("/api/auth/**", "/swagger-ui-custom.html" ,"/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**",
+                                "/swagger-ui/index.html","/api-docs/**", "/api/users", "/**",
+                                "/index-shortener.html", "/css/**", "/images/**", "/js/**", "/sl/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
@@ -82,6 +80,7 @@ public class SecurityConfiguration  extends GlobalAuthenticationConfigurerAdapte
                         .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
                         .and())
                 .build();
+        //@formatter:on
     }
 
     private UserDetailsService userDetailsService() {
