@@ -36,11 +36,11 @@
                 <input type="text" class="form-control" id="shortUrl" readonly>
                 <button onclick="copyShortUrl()" class="btn btn-primary mt-2">Copy</button>
             </div>
-            <div id="shortUrlRedirect" class="mb-3" style="display: none;">
-                <label for="shortUrlRedir" class="form-label">Short URL:</label>
-                <input type="text" class="form-control" id="shortUrlRedir" name="shortUrlRedir">
-                <button onclick="redirectToLongUrl()" class="btn btn-primary mt-2">Go</button>
-            </div>
+<!--            <div id="shortUrlRedirect" class="mb-3" style="display: none;">-->
+<!--                <label for="shortUrlRedir" class="form-label">Short URL:</label>-->
+<!--                <input type="text" class="form-control" id="shortUrlRedir" name="shortUrlRedir">-->
+<!--                <button onclick="redirectToLongUrl()" class="btn btn-primary mt-2">Go</button>-->
+<!--            </div>-->
         </div>
         <div class="col-md-6">
             <div id="userStatisticsContainer" class="mb-3" style="display: none;">
@@ -110,21 +110,21 @@
         alert('Copied the short URL: ' + shortUrlInput.value);
     }
 
-    async function redirectToLongUrl() {
-        const shortUrl = document.getElementById('shortUrlRedir').value;
+<!--    async function redirectToLongUrl() {-->
+<!--        const shortUrl = document.getElementById('shortUrlRedir').value;-->
 
-        try {
-            const response = await axios.post('/api/shortLinks/resolve', { shortUrl: shortUrl });
-            const longUrl = response.data.originalUrl;
-            document.getElementById('longUrl').value = longUrl;
-            window.open(longUrl, '_blank');
-            getUserStatistics();
-            getActiveUserStatistics();
-        } catch (error) {
-            console.error('Error redirecting to long URL:', error.message);
-            alert('Short URL not found');
-        }
-    }
+<!--        try {-->
+<!--            const response = await axios.post('/api/shortLinks/resolve', { shortUrl: shortUrl });-->
+<!--            const longUrl = response.data.originalUrl;-->
+<!--            document.getElementById('longUrl').value = longUrl;-->
+<!--            window.open(longUrl, '_blank');-->
+<!--            getUserStatistics();-->
+<!--            getActiveUserStatistics();-->
+<!--        } catch (error) {-->
+<!--            console.error('Error redirecting to long URL:', error.message);-->
+<!--            alert('Short URL not found');-->
+<!--        }-->
+<!--    }-->
     async function getUserStatistics() {
         try {
             const response = await axios.get('/api/shortLinks/all', {
