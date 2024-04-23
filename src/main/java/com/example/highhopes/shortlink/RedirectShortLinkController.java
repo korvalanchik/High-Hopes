@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-//@Controller
 @RestController
 @RequestMapping("/api")
 public class RedirectShortLinkController {
@@ -32,17 +31,6 @@ public class RedirectShortLinkController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(originalUrl);
     }
-//        @GetMapping("/{shortLink}")
-//    public String redirectShortUrl(@PathVariable String shortLink,
-//                                                                   HttpServletRequest request,
-//                                                                   HttpServletResponse response) {
-//
-//        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortLink, request, response);
-//        if (originalUrl.getError() != GetOriginalUrlResponse.Error.OK || originalUrl.getOriginalUrl() == null) {
-//            return String.valueOf(originalUrl.getError());
-//        }
-//        return "redirect:" + originalUrl.getOriginalUrl();
-//    }
 }
 
 

@@ -1,8 +1,7 @@
 package com.example.highhopes.shortlink;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -88,20 +87,6 @@ public class ShortLinkResource {
     public ResponseEntity<Void> deleteShortLink(@PathVariable(name = "id") final Long id) {
         shortLinkService.delete(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/resolve")
-    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(@RequestBody ShortLinkResolveRequestDTO shortLinkResolveRequestDTO,
-                                                                  HttpServletRequest request,
-                                                                  HttpServletResponse response) {
-        String shortUrl = shortLinkResolveRequestDTO.getShortUrl();
-        shortUrl = shortUrl.substring(shortUrl.length() - 8);
-
-        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortUrl, request, response);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(originalUrl);
     }
 
     @GetMapping("/active")
