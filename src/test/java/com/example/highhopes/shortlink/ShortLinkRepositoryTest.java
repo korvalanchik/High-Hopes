@@ -14,7 +14,7 @@ class ShortLinkRepositoryTest {
 
     @Test
     void testFindByShortLinkWhenShortLinkValid() {
-        String link = "http://localhost:8080/api/abcd1234";
+        String link = "http://localhost:8080/api/sl/abcd1234";
         ShortLink found = shortLinkRepository.findByShortLink(link);
         assertThat(found.getShortUrl()).isEqualTo(link);
     }
