@@ -42,6 +42,12 @@ public class ShortLinkResource {
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(response);
         }
+        if(shortLinkService.getLinksByShortLink(url) != null){
+            response.put("error", "Url already exists");
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response);
+        }
 
         final String shortURL = shortLinkService.create(shortLinkCreateRequestDTO);
         response.put("error", "ok");
