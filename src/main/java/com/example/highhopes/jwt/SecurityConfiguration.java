@@ -66,9 +66,8 @@ public class SecurityConfiguration  extends GlobalAuthenticationConfigurerAdapte
                                 "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**",
                                 "/swagger-ui/index.html","/api-docs/**", "/api/users", "/api/shortLinks",
                                 "/index-shortener", "/css/**", "/images/**", "/favicon.ico", "/js/**",
-                                "/index-user", "/")
+                                "/index-user", "/", "/api/sl/**")
                         .permitAll()
-                        .requestMatchers("/api/sl/**").permitAll()
                         .anyRequest()
                         .authenticated())
                 .cors(AbstractHttpConfigurer::disable)
