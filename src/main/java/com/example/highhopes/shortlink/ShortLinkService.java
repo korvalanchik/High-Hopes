@@ -26,6 +26,9 @@ public class ShortLinkService {
     @Value("${shortlink.generate.length}")
     private int shortLinkLength;
 
+    @Value("${api.server.url}")
+    private String host;
+
     private final ShortLinkRepository shortLinkRepository;
     private final UserRepository userRepository;
     private static final String USER_NOT_FOUND = "User not found with username: ";
@@ -72,7 +75,7 @@ public class ShortLinkService {
         shortLinkDTO.setId(shortLink.getId());
         shortLinkDTO.setUserId(shortLink.getUser() != null ? shortLink.getUser().getId() : null);
         shortLinkDTO.setOriginalUrl(shortLink.getOriginalUrl());
-        shortLinkDTO.setShortUrl(shortLink.getShortUrl());
+        shortLinkDTO.setShortUrl(host + "short/" + shortLink.getShortUrl());
         shortLinkDTO.setCreationDate(shortLink.getCreationDate());
         shortLinkDTO.setExpiryDate(shortLink.getExpiryDate());
         shortLinkDTO.setStatus(shortLink.isActive());
@@ -118,8 +121,8 @@ public class ShortLinkService {
         }
 
         String shortURL =
-                ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() +
-                        "/" +  generateURL(shortLinkLength);
+//                ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/" +
+                        generateURL(shortLinkLength);
         shortLink.setShortUrl(shortURL);
 
         shortLink.setOriginalUrl(shortLinkCreateRequestDTO.getOriginalUrl());
@@ -207,7 +210,7 @@ public class ShortLinkService {
             ShortLinkDTO shortLinkDTO = new ShortLinkDTO();
             shortLinkDTO.setId(shortLink.getId());
             shortLinkDTO.setOriginalUrl(shortLink.getOriginalUrl());
-            shortLinkDTO.setShortUrl(shortLink.getShortUrl());
+            shortLinkDTO.setShortUrl(host + "short/" + shortLink.getShortUrl());
             shortLinkDTO.setCreationDate(shortLink.getCreationDate());
             shortLinkDTO.setExpiryDate(shortLink.getExpiryDate());
             shortLinkDTO.setStatus(shortLink.isActive());

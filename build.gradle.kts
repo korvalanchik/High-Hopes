@@ -47,6 +47,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:3.2.5")
 
     implementation("io.github.wimdeblauwe:error-handling-spring-boot-starter:4.2.0")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")

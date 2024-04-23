@@ -44,26 +44,6 @@ public class UserResource {
         return ResponseEntity.ok(userService.get(id));
     }
 
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<?> createUser(@RequestBody @Valid final UserDTO userDTO) {
-        Map<String, Object> response = new HashMap<>();
-        String password = userDTO.getPassword();
-
-        if (password == null || password.length() < 8 || !password.matches(".*\\d.*") || !password.matches(".*[A-Z].*") || !password.matches(".*[a-z].*")) {
-            response.put("error", "Invalid password. It must be at least 8 characters long and contain at least one digit, one uppercase letter, and one lowercase letter");
-            return ResponseEntity.status(HttpStatus.ACCEPTED).contentType(MediaType.APPLICATION_JSON).body(response);
-        }
-        if (!userService.isUsernameUnique(userDTO.getUsername())) {
-            response.put("error", "Username is already taken");
-            return ResponseEntity.status(HttpStatus.ACCEPTED).contentType(MediaType.APPLICATION_JSON).body(response);
-        }
-
-        response.put("error", "Ok");
-        final Long createdId = userService.create(userDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(response);
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<Long> updateUser(@PathVariable(name = "id") final Long id,
             @RequestBody @Valid final UserDTO userDTO) {

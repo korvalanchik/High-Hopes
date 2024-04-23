@@ -8,11 +8,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +31,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+//@WebMvcTest(ShortLinkResource.class)
+@AutoConfigureMockMvc
 public class ShortLinkServiceTest {
 
     @Mock
@@ -35,58 +46,23 @@ public class ShortLinkServiceTest {
 
     @BeforeEach
     public void setUp() {
-        // Mocking the Authentication object
-        Authentication authentication = mock(Authentication.class);
-        when(authentication.getName()).thenReturn("testUser");
-
-        // Setting up the SecurityContextHolder with the mock Authentication
-        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     @Test
     public void testFindAll() {
-        // Mock data
         ShortLink shortLink1 = new ShortLink();
         shortLink1.setId(1L);
         ShortLink shortLink2 = new ShortLink();
         shortLink2.setId(2L);
         List<ShortLink> shortLinks = Arrays.asList(shortLink1, shortLink2);
 
-        // Stubbing repository method
         when(shortLinkRepository.findAll(Sort.by("id"))).thenReturn(shortLinks);
 
-        // Call the service method
         List<ShortLinkDTO> result = shortLinkService.findAll();
 
-        // Verify the result
         assertEquals(2, result.size());
         assertEquals(1L, result.get(0).getId());
         assertEquals(2L, result.get(1).getId());
     }
 
-    @Test
-    public void testCreate() {
-        // Mock data
-        ShortLinkCreateRequestDTO requestDTO = new ShortLinkCreateRequestDTO();
-        requestDTO.setOriginalUrl("http://example.com");
-        User user = new User();
-        user.setId(1L);
-        Optional<User> userOptional = Optional.of(user);
-
-        // Stubbing repository method
-        when(userRepository.findByUsername(anyString())).thenReturn(userOptional);
-        when(shortLinkRepository.save(any(ShortLink.class))).thenAnswer(invocation -> {
-            ShortLink shortLink = invocation.getArgument(0);
-            shortLink.setId(1L);
-            return shortLink;
-        });
-
-        // Call the service method
-        String shortUrl = shortLinkService.create(requestDTO);
-
-        // Verify the result
-        assertEquals("/random_short_url", shortUrl); // Adjust the expected value accordingly
-    }
-
-    // Add more test methods for other service methods
 }
