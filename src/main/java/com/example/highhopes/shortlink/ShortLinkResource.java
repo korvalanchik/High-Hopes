@@ -1,34 +1,22 @@
 package com.example.highhopes.shortlink;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.time.OffsetDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @RestController
+@Tag(name = "Short links", description = "The ShortLnk API. Contains operations like add, delete, change, get short link and statistics on them")
 @RequestMapping(value = "/api/shortLinks", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ShortLinkResource {
 
@@ -43,7 +31,6 @@ public class ShortLinkResource {
         return ResponseEntity.ok(shortLinkService.findAll());
     }
 
-
     @PostMapping()
     @ApiResponse(responseCode = "201")
     public ResponseEntity<?> createLink(@RequestBody @Valid final ShortLinkCreateRequestDTO shortLinkCreateRequestDTO) {
@@ -51,6 +38,12 @@ public class ShortLinkResource {
         String url = shortLinkCreateRequestDTO.getOriginalUrl();
         if (!checkLink(url)) {
             response.put("error", "Invalid URL");
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response);
+        }
+        if(shortLinkService.getLinksByShortLink(url) != null){
+            response.put("error", "Url already exists");
             return ResponseEntity.status(HttpStatus.CREATED)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(response);
@@ -82,8 +75,6 @@ public class ShortLinkResource {
         }
     }
 
-
-
     @PutMapping("/{id}")
     public ResponseEntity<Long> updateShortLink(@PathVariable(name = "id") final Long id,
             @RequestBody @Valid final ShortLinkDTO shortLinkDTO) {
@@ -97,17 +88,6 @@ public class ShortLinkResource {
         shortLinkService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
-//    @GetMapping("/{shortLink}")
-//    public ResponseEntity<GetOriginalUrlResponse> redirectToOriginalUrl(@PathVariable String shortLink,
-//                                                                        HttpServletRequest request,
-//                                                                        HttpServletResponse response) {
-//        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortLink, request, response);
-//
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .body(originalUrl);
-//    }
 
     @PostMapping("/resolve")
     public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(@RequestBody ShortLinkResolveRequestDTO shortLinkResolveRequestDTO) {
@@ -141,8 +121,5 @@ public class ShortLinkResource {
         List<ShortLinkDTO> allShortLinks = shortLinkService.getAllShortLinks();
         return ResponseEntity.ok(allShortLinks);
     }
-
-
-
 
 }

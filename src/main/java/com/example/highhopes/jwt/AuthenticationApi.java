@@ -22,9 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Instant;
 import java.util.stream.Collectors;
 
-/**
- * REST APIs that contains all the operations that can be performed for authentication like login, registration etc
- */
 @RequestMapping("/api/auth")
 @RestController
 @Tag(name = "Authentication", description = "The Authentication API. Contains operations like change password, forgot password, login, logout, etc.")
@@ -40,13 +37,6 @@ public class AuthenticationApi {
         this.passwordEncoder = passwordEncoder;
     }
 
-    /**
-     * API to Login
-     *
-     * @param user The login entity that contains username and password
-     * @return Returns the JWT token
-     * @see com.baeldung.jwt.User
-     */
     @Operation(summary = "User Authentication", description = "Authenticate the user and return a JWT token if the user is valid.")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json", examples = @io.swagger.v3.oas.annotations.media.ExampleObject(value = "{\n" + "  \"username\": \"jane\",\n"
       + "  \"password\": \"password\"\n" + "}", summary = "User Authentication Example")))
@@ -63,16 +53,9 @@ public class AuthenticationApi {
         }
     }
 
-    /**
-     * Generates the  JWT token with claims
-     *
-     * @param userDetails The user details
-     * @return Returns the JWT token
-     */
     private String generateToken(UserDetails userDetails) {
         Instant now = Instant.now();
         long expiry = 36000L;
-        // @formatter:off
         String scope = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
@@ -83,7 +66,6 @@ public class AuthenticationApi {
                 .subject(userDetails.getUsername())
                 .claim("scope", scope)
                 .build();
-        // @formatter:on
         return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 

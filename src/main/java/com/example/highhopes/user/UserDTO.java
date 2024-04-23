@@ -1,17 +1,17 @@
 package com.example.highhopes.user;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.OffsetDateTime;
 
 
 @Getter
 @Setter
+
 public class UserDTO {
 
     private Long id;
@@ -35,4 +35,6 @@ public class UserDTO {
         this.lastUpdated = OffsetDateTime.now();
     }
 
+    public UserDTO(Long o, String user1, String password1) {
+    }
 }

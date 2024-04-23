@@ -21,7 +21,6 @@
                 <div th:replace="~{fragments/forms::inputRow(object='shortLink', field='expiryDate')}" />
                 <div th:replace="~{fragments/forms::inputRow(object='shortLink', field='status', type='checkbox')}" />
                 <div th:replace="~{fragments/forms::inputRow(object='shortLink', field='clicks', type='number')}" />
-                <div th:replace="~{fragments/forms::inputRow(object='shortLink', field='user', type='select')}" />
                 <input type="submit" th:value="#{shortLink.add.headline}" class="btn btn-primary mt-4" />
             </form>
         </div>

@@ -50,13 +50,6 @@ public class ShortLinkService {
                 .orElseThrow(NotFoundException::new);
     }
 
-//    public Long create(final ShortLinkDTO shortLinkDTO) {
-//        final ShortLink shortLink = new ShortLink();
-//        mapToEntity(shortLinkDTO, shortLink);
-//        return shortLinkRepository.save(shortLink).getId();
-//    }
-
-
     @Transactional
     public String create(final ShortLinkCreateRequestDTO shortLinkCreateRequestDTO) {
         final ShortLink shortLink = new ShortLink();
@@ -78,14 +71,12 @@ public class ShortLinkService {
     private ShortLinkDTO mapToDTO(final ShortLink shortLink, final ShortLinkDTO shortLinkDTO) {
         shortLinkDTO.setId(shortLink.getId());
         shortLinkDTO.setUserId(shortLink.getUser() != null ? shortLink.getUser().getId() : null);
-//        shortLinkDTO.setUserId(shortLink.getUserId());
         shortLinkDTO.setOriginalUrl(shortLink.getOriginalUrl());
         shortLinkDTO.setShortUrl(shortLink.getShortUrl());
         shortLinkDTO.setCreationDate(shortLink.getCreationDate());
         shortLinkDTO.setExpiryDate(shortLink.getExpiryDate());
         shortLinkDTO.setStatus(shortLink.isActive());
         shortLinkDTO.setClicks(shortLink.getClicks());
-//        shortLinkDTO.setUser(shortLink.getUser() == null ? null : shortLink.getUser().getId());
         return shortLinkDTO;
     }
 
@@ -104,16 +95,12 @@ public class ShortLinkService {
 
         shortLink.setId(shortLinkDTO.getId());
 
-//        shortLink.setUserId(shortLinkDTO.getUserId());
         shortLink.setOriginalUrl(shortLinkDTO.getOriginalUrl());
         shortLink.setShortUrl(shortLinkDTO.getShortUrl());
         shortLink.setCreationDate(shortLinkDTO.getCreationDate());
         shortLink.setExpiryDate(OffsetDateTime.now().plusDays(7));
         shortLink.setActive(shortLinkDTO.getStatus());
         shortLink.setClicks(shortLinkDTO.getClicks());
-//        final User user = shortLinkDTO.getUser() == null ? null : userRepository.findById(shortLinkDTO.getUser())
-//                .orElseThrow(() -> new NotFoundException("user not found"));
-//        shortLink.setUser(user);
         return shortLink;
     }
 
@@ -156,20 +143,24 @@ public class ShortLinkService {
         return sb.toString();
     }
 
-
     @Cacheable(value = "resolveUrlCache", key = "#shortUrl")
     public GetOriginalUrlResponse getOriginalUrl(String shortUrl) {
         GetOriginalUrlResponse originalUrlResponse = new GetOriginalUrlResponse();
         ShortLink linkDb = shortLinkRepository.findByShortLink(shortUrl);
 
         if (linkDb != null) {
-            originalUrlResponse.setOriginalUrl(linkDb.getOriginalUrl());
-            originalUrlResponse.setError(GetOriginalUrlResponse.Error.OK);
-//            incrementClicks(linkDb);
+            if(!linkDb.getExpiryDate().isAfter(OffsetDateTime.now())){
+                originalUrlResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_ACTIVE);
+                linkDb.setActive(false);
+                shortLinkRepository.save(linkDb);
+            }
+            else{
+                originalUrlResponse.setOriginalUrl(linkDb.getOriginalUrl());
+                originalUrlResponse.setError(GetOriginalUrlResponse.Error.OK);
+            }
         } else {
             originalUrlResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_FOUND);
         }
-
         return originalUrlResponse;
     }
 
@@ -227,4 +218,7 @@ public class ShortLinkService {
         return shortLinkDTOs;
     }
 
+    public ShortLink getLinksByShortLink(String original_url){
+        return shortLinkRepository.findByOriginalLink(original_url);
+    }
 }

@@ -2,11 +2,13 @@ package com.example.highhopes.user;
 
 import com.example.highhopes.shortlink.ShortLink;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.OffsetDateTime;
 import java.util.Set;
@@ -14,7 +16,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 public class User {
@@ -37,6 +38,8 @@ public class User {
     private String username;
 
     @Column(nullable = false)
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).*$", message = "Password must contain at least one digit, one lowercase and one uppercase letter")
     private String password;
 
     @OneToMany(mappedBy = "user")
@@ -50,6 +53,12 @@ public class User {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+    public User(long l, String user1, String password1) {
+    }
+
+    public User() {
+
+    }
 
     @PreUpdate
     public void preUpdate() {
