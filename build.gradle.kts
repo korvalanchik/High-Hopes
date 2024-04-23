@@ -39,6 +39,7 @@ dependencies {
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
     implementation("org.springframework.security:spring-security-oauth2-jose:6.2.3")
     implementation("org.springframework.security:spring-security-oauth2-resource-server:6.2.3")
+    testImplementation("junit:junit:4.13.1")
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("com.h2database:h2")
     implementation("com.mysql:mysql-connector-j:8.3.0")

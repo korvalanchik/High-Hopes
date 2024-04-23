@@ -60,6 +60,9 @@ public class User {
 
     }
 
+    public User(String testUser, String password) {
+    }
+
     @PreUpdate
     public void preUpdate() {
         this.lastUpdated = OffsetDateTime.now();
