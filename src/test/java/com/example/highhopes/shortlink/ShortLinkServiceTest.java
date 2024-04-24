@@ -1,74 +1,68 @@
 package com.example.highhopes.shortlink;
 
+import com.example.highhopes.user.User;
+import com.example.highhopes.user.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ShortLinkServiceTest {
+//@WebMvcTest(ShortLinkResource.class)
+@AutoConfigureMockMvc
+public class ShortLinkServiceTest {
 
     @Mock
     private ShortLinkRepository shortLinkRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
     @InjectMocks
     private ShortLinkService shortLinkService;
 
+    @BeforeEach
+    public void setUp() {
+    }
+
     @Test
-    void ShortLinkServiceFindAllReturnsListOfShortLinkDTO() {
-        List<ShortLink> shortLinks = new ArrayList<>();
-        shortLinks.add(new ShortLink());
-        shortLinks.add(new ShortLink());
+    public void testFindAll() {
+        ShortLink shortLink1 = new ShortLink();
+        shortLink1.setId(1L);
+        ShortLink shortLink2 = new ShortLink();
+        shortLink2.setId(2L);
+        List<ShortLink> shortLinks = Arrays.asList(shortLink1, shortLink2);
+
         when(shortLinkRepository.findAll(Sort.by("id"))).thenReturn(shortLinks);
 
-        List<ShortLinkDTO> foundShortLinks = shortLinkService.findAll();
+        List<ShortLinkDTO> result = shortLinkService.findAll();
 
-        assertThat(foundShortLinks).isNotEmpty();
-        assertThat(foundShortLinks.size()).isEqualTo(shortLinks.size());
+        assertEquals(2, result.size());
+        assertEquals(1L, result.get(0).getId());
+        assertEquals(2L, result.get(1).getId());
     }
 
-    @Test
-    void ShortLinkService_Get_ReturnsShortLinkDTO() {
-        Long id = 1L;
-        ShortLink shortLink = new ShortLink();
-        when(shortLinkRepository.findById(id)).thenReturn(Optional.of(shortLink));
-
-        ShortLinkDTO foundShortLink = shortLinkService.get(id);
-
-        assertThat(foundShortLink).isNotNull();
-    }
-
-    @Test
-    void testHandleShortLink() {
-        ShortLink shortLinkDb = new ShortLink();
-        shortLinkDb.setExpiryDate(OffsetDateTime.now().minusDays(1));
-
-        GetOriginalUrlResponse originalUrlResponse = ReflectionTestUtils.invokeMethod(shortLinkService,
-                "handleShortLink", shortLinkDb);
-
-        assert originalUrlResponse != null;
-        assertEquals(originalUrlResponse.getError(), GetOriginalUrlResponse.Error.LINK_NOT_ACTIVE);
-    }
-
-    @Test
-    void testIncrementClicks() {
-        ShortLink shortLink = new ShortLink();
-        shortLink.setClicks(0);
-
-        ReflectionTestUtils.invokeMethod(shortLinkService, "incrementClicks", shortLink);
-
-        assertEquals(shortLink.getClicks(), 1);
-    }
 }

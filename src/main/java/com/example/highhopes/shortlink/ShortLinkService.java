@@ -4,9 +4,8 @@ import com.example.highhopes.user.User;
 import com.example.highhopes.user.UserRepository;
 import com.example.highhopes.utils.CookieUtils;
 import com.example.highhopes.utils.NotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,14 +19,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import static com.example.highhopes.shortlink.GetOriginalUrlResponse.Error.OK;
-
 
 @Service
 public class ShortLinkService {
 
     @Value("${shortlink.generate.length}")
     private int shortLinkLength;
+
+    @Value("${api.server.url}")
+    private String host;
 
     private final ShortLinkRepository shortLinkRepository;
     private final UserRepository userRepository;
@@ -75,7 +75,7 @@ public class ShortLinkService {
         shortLinkDTO.setId(shortLink.getId());
         shortLinkDTO.setUserId(shortLink.getUser() != null ? shortLink.getUser().getId() : null);
         shortLinkDTO.setOriginalUrl(shortLink.getOriginalUrl());
-        shortLinkDTO.setShortUrl(shortLink.getShortUrl());
+        shortLinkDTO.setShortUrl(host + "short/" + shortLink.getShortUrl());
         shortLinkDTO.setCreationDate(shortLink.getCreationDate());
         shortLinkDTO.setExpiryDate(shortLink.getExpiryDate());
         shortLinkDTO.setStatus(shortLink.isActive());
@@ -121,8 +121,8 @@ public class ShortLinkService {
         }
 
         String shortURL =
-                ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() +
-                        "/sl/" +  generateURL(shortLinkLength);
+//                ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/" +
+                        generateURL(shortLinkLength);
         shortLink.setShortUrl(shortURL);
 
         shortLink.setOriginalUrl(shortLinkCreateRequestDTO.getOriginalUrl());
@@ -146,50 +146,33 @@ public class ShortLinkService {
         return sb.toString();
     }
 
-    public GetOriginalUrlResponse getOriginalUrlResponse(String shortLink,
-                                                         HttpServletRequest request,
-                                                         HttpServletResponse response) {
-        String linkCookie = cookieUtils.findCookie(request, shortLink);
-        String shortURL =
-                ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() +
-                        "/sl/" + shortLink;
-        ShortLink shortLinkDb = shortLinkRepository.findByShortLink(shortURL);
-
-        GetOriginalUrlResponse originalUrlResponse = handleShortLink(shortLinkDb);
-
-        if (!originalUrlResponse.getError().equals(OK)){
-            return originalUrlResponse;
-        }
-
-        if (linkCookie == null || linkCookie.equals("Not found")) {
-            response.addCookie(cookieUtils.createCookie(shortLink, shortLinkDb.getOriginalUrl()));
-            originalUrlResponse.setOriginalUrl(shortLinkDb.getOriginalUrl());
-        } else {
-            originalUrlResponse.setOriginalUrl(linkCookie);
-        }
-
-        incrementClicks(shortLinkDb);
-
-        return originalUrlResponse;
-    }
-
-    private GetOriginalUrlResponse handleShortLink(ShortLink shortLinkDb) {
+    @Cacheable(value = "resolveUrlCache", key = "#shortUrl")
+    public GetOriginalUrlResponse getOriginalUrl(String shortUrl) {
         GetOriginalUrlResponse originalUrlResponse = new GetOriginalUrlResponse();
-        if (shortLinkDb == null) {
-            originalUrlResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_FOUND);
-        } else if (!shortLinkDb.getExpiryDate().isAfter(OffsetDateTime.now()) || !shortLinkDb.isActive()) {
-            originalUrlResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_ACTIVE);
-            shortLinkDb.setActive(false);
-            shortLinkRepository.save(shortLinkDb);
+        ShortLink linkDb = shortLinkRepository.findByShortLink(shortUrl);
+
+        if (linkDb != null) {
+            if(!linkDb.getExpiryDate().isAfter(OffsetDateTime.now())){
+                originalUrlResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_ACTIVE);
+                linkDb.setActive(false);
+                shortLinkRepository.save(linkDb);
+            }
+            else{
+                originalUrlResponse.setOriginalUrl(linkDb.getOriginalUrl());
+                originalUrlResponse.setError(GetOriginalUrlResponse.Error.OK);
+            }
         } else {
-            originalUrlResponse.setError(OK);
+            originalUrlResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_FOUND);
         }
         return originalUrlResponse;
     }
 
-    private void incrementClicks(final ShortLink shortLink) {
-        shortLink.setClicks(shortLink.getClicks() + 1);
-        shortLinkRepository.save(shortLink);
+    public void incrementClicks(String shortLink) {
+        ShortLink link = shortLinkRepository.findByShortLink(shortLink);
+        if(link != null) {
+            link.setClicks(link.getClicks() + 1);
+            shortLinkRepository.save(link);
+        }
     }
 
     public List<ShortLinkDTO> getActiveShortLinks() {
@@ -227,7 +210,7 @@ public class ShortLinkService {
             ShortLinkDTO shortLinkDTO = new ShortLinkDTO();
             shortLinkDTO.setId(shortLink.getId());
             shortLinkDTO.setOriginalUrl(shortLink.getOriginalUrl());
-            shortLinkDTO.setShortUrl(shortLink.getShortUrl());
+            shortLinkDTO.setShortUrl(host + "short/" + shortLink.getShortUrl());
             shortLinkDTO.setCreationDate(shortLink.getCreationDate());
             shortLinkDTO.setExpiryDate(shortLink.getExpiryDate());
             shortLinkDTO.setStatus(shortLink.isActive());
@@ -238,7 +221,7 @@ public class ShortLinkService {
         return shortLinkDTOs;
     }
 
-    public ShortLink getLinksByShortLink(String originalUrl){
-        return shortLinkRepository.findByOriginalLink(originalUrl);
+    public ShortLink getLinksByShortLink(String original_url){
+        return shortLinkRepository.findByOriginalLink(original_url);
     }
 }

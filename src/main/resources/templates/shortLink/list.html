@@ -8,9 +8,6 @@
         <div layout:fragment="content">
             <div class="d-flex flex-wrap mb-4">
                 <h1 class="flex-grow-1">[[#{shortLink.list.headline}]]</h1>
-                <div>
-                    <a th:href="@{/shortLinks/add}" class="btn btn-primary ms-2">[[#{shortLink.list.createNew}]]</a>
-                </div>
             </div>
             <div th:if="${shortLinks.empty}">[[#{shortLink.list.empty}]]</div>
             <div th:if="${!shortLinks.empty}" class="table-responsive">
@@ -38,15 +35,6 @@
                             <td>[[${shortLink.expiryDate}]]</td>
                             <td>[[${shortLink.status}]]</td>
                             <td>[[${shortLink.clicks}]]</td>
-                            <td>
-                                <div class="float-end text-nowrap">
-                                    <a th:href="@{/shortLinks/edit/{id}(id=${shortLink.id})}" class="btn btn-sm btn-secondary">[[#{shortLink.list.edit}]]</a>
-                                    <form th:action="@{/shortLinks/delete/{id}(id=${shortLink.id})}"
-                                            th:data-confirm-message="#{delete.confirm}" method="post" class="js-submit-confirm d-inline">
-                                        <button type="submit" class="btn btn-sm btn-secondary">[[#{shortLink.list.delete}]]</button>
-                                    </form>
-                                </div>
-                            </td>
                         </tr>
                     </tbody>
                 </table>

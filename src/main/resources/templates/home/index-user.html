@@ -38,10 +38,11 @@
         };
 
         try {
-            const response = await axios.post('/api/users', registrationData);
+            const response = await axios.post('/api/auth/register', registrationData);
             alert(response.data.error);
+            window.location.href = '/';
         } catch (error) {
-            alert('Registration failed. Please try again.');
+            alert('Registration failed. ', response.data.error);
             console.error('Error registering user:', error);
         }
     });

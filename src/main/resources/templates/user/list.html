@@ -8,9 +8,6 @@
         <div layout:fragment="content">
             <div class="d-flex flex-wrap mb-4">
                 <h1 class="flex-grow-1">[[#{user.list.headline}]]</h1>
-                <div>
-                    <a th:href="@{/users/add}" class="btn btn-primary ms-2">[[#{user.list.createNew}]]</a>
-                </div>
             </div>
             <div th:if="${users.empty}">[[#{user.list.empty}]]</div>
             <div th:if="${!users.empty}" class="table-responsive">
@@ -31,15 +28,6 @@
                             <td>[[${user.password}]]</td>
                             <td>[[${user.dateCreated}]]</td>
 
-                            <td>
-                                <div class="float-end text-nowrap">
-                                    <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-sm btn-secondary">[[#{user.list.edit}]]</a>
-                                    <form th:action="@{/users/delete/{id}(id=${user.id})}"
-                                            th:data-confirm-message="#{delete.confirm}" method="post" class="js-submit-confirm d-inline">
-                                        <button type="submit" class="btn btn-sm btn-secondary">[[#{user.list.delete}]]</button>
-                                    </form>
-                                </div>
-                            </td>
                         </tr>
                     </tbody>
                 </table>

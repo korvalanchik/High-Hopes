@@ -63,10 +63,11 @@ public class SecurityConfiguration  extends GlobalAuthenticationConfigurerAdapte
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
 
                         .requestMatchers("/api/auth/**", "/swagger-ui-custom.html" ,"/swagger-ui.html",
-                                "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**",
+                                "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**", "/short/**",
                                 "/swagger-ui/index.html","/api-docs/**", "/api/users", "/api/shortLinks",
+                                "/shortLinks", "/users",
                                 "/index-shortener", "/css/**", "/images/**", "/favicon.ico", "/js/**",
-                                "/index-user", "/", "/sl/**")
+                                "/index-user", "/", "/api/shortLinks/resolve")
                         .permitAll()
                         .anyRequest()
                         .authenticated())

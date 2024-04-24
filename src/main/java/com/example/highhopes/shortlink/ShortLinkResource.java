@@ -3,6 +3,7 @@ package com.example.highhopes.shortlink;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,9 @@ import java.util.Map;
 @Tag(name = "Short links", description = "The ShortLnk API. Contains operations like add, delete, change, get short link and statistics on them")
 @RequestMapping(value = "/api/shortLinks", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ShortLinkResource {
+
+    @Value("${api.server.url}")
+    private String host;
 
     private final ShortLinkService shortLinkService;
 
@@ -49,9 +53,9 @@ public class ShortLinkResource {
                     .body(response);
         }
 
-        final String shortURL = shortLinkService.create(shortLinkCreateRequestDTO);
-        response.put("error", "ok");
-        response.put("short_url", shortURL);
+        final String link = shortLinkService.create(shortLinkCreateRequestDTO);
+        response.put("error", "OK");
+        response.put("short_url", host + "short/" + link);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -87,6 +91,29 @@ public class ShortLinkResource {
     public ResponseEntity<Void> deleteShortLink(@PathVariable(name = "id") final Long id) {
         shortLinkService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/resolve")
+    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(@RequestBody ShortLinkResolveRequestDTO shortLinkResolveRequestDTO) {
+        String shortUrl = shortLinkResolveRequestDTO.getShortUrl();
+        String[] parts = shortUrl.split("/");
+        String link = parts[parts.length - 1];
+
+        if (link == null || link.isEmpty()) {
+            GetOriginalUrlResponse errorResponse = new GetOriginalUrlResponse();
+            errorResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(errorResponse);
+        }
+
+        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(link);
+
+        shortLinkService.incrementClicks(link);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(originalUrl);
     }
 
     @GetMapping("/active")

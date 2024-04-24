@@ -36,11 +36,11 @@
                 <input type="text" class="form-control" id="shortUrl" readonly>
                 <button onclick="copyShortUrl()" class="btn btn-primary mt-2">Copy</button>
             </div>
-<!--            <div id="shortUrlRedirect" class="mb-3" style="display: none;">-->
-<!--                <label for="shortUrlRedir" class="form-label">Short URL:</label>-->
-<!--                <input type="text" class="form-control" id="shortUrlRedir" name="shortUrlRedir">-->
-<!--                <button onclick="redirectToLongUrl()" class="btn btn-primary mt-2">Go</button>-->
-<!--            </div>-->
+            <div id="shortUrlRedirect" class="mb-3" style="display: none;">
+                <label for="shortUrlRedir" class="form-label">Short URL:</label>
+                <input type="text" class="form-control" id="shortUrlRedir" name="shortUrlRedir">
+                <button onclick="redirectToLongUrl()" class="btn btn-primary mt-2">Go</button>
+            </div>
         </div>
         <div class="col-md-6">
             <div id="userStatisticsContainer" class="mb-3" style="display: none;">
@@ -62,13 +62,18 @@
         const password = document.getElementById('password').value;
         try {
             const response = await axios.post('/api/auth/login', { username, password });
-            token = response.data.token;
-            localStorage.setItem('token', token);
-            document.getElementById('userStatisticsContainer').style.display = 'block';
-            document.getElementById('shortUrlContainer').style.display = 'block';
-            document.getElementById('shortUrlRedirect').style.display = 'block';
-            getUserStatistics();
-            getActiveUserStatistics();
+            const responseData = response.data;
+            if (responseData.error && responseData.error !== 'OK') {
+                alert(`Error: ${responseData.error}`);
+            } else {
+                token = response.data.token;
+                localStorage.setItem('token', token);
+                document.getElementById('userStatisticsContainer').style.display = 'block';
+                document.getElementById('shortUrlContainer').style.display = 'block';
+                document.getElementById('shortUrlRedirect').style.display = 'block';
+                getUserStatistics();
+                getActiveUserStatistics();
+            }
         } catch (error) {
             console.error('Error logging in:', error.message);
         }
@@ -94,9 +99,13 @@
             const response = await axios.post('/api/shortLinks', data, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            const shortUrl = response.data.short_url;
-            document.getElementById('shortUrl').value = shortUrl;
-            document.getElementById('shortUrlResult').style.display = 'block';
+            const responseData = response.data;
+            if (responseData.error && responseData.error !== 'OK') {
+                alert(`Error: ${responseData.error}`);
+            } else {
+                document.getElementById('shortUrl').value = responseData.short_url;
+                document.getElementById('shortUrlResult').style.display = 'block';
+            }
         } catch (error) {
             console.error('Error shortening URL:', error.message);
         }
@@ -110,28 +119,37 @@
         alert('Copied the short URL: ' + shortUrlInput.value);
     }
 
-<!--    async function redirectToLongUrl() {-->
-<!--        const shortUrl = document.getElementById('shortUrlRedir').value;-->
+    async function redirectToLongUrl() {
+        const shortUrl = document.getElementById('shortUrlRedir').value;
 
-<!--        try {-->
-<!--            const response = await axios.post('/api/shortLinks/resolve', { shortUrl: shortUrl });-->
-<!--            const longUrl = response.data.originalUrl;-->
-<!--            document.getElementById('longUrl').value = longUrl;-->
-<!--            window.open(longUrl, '_blank');-->
-<!--            getUserStatistics();-->
-<!--            getActiveUserStatistics();-->
-<!--        } catch (error) {-->
-<!--            console.error('Error redirecting to long URL:', error.message);-->
-<!--            alert('Short URL not found');-->
-<!--        }-->
-<!--    }-->
+        try {
+            const response = await axios.post('/api/shortLinks/resolve', { shortUrl: shortUrl });
+            const responseData = response.data;
+            if (responseData.error && responseData.error !== 'OK') {
+                alert(`Error: ${responseData.error}`);
+            } else {
+                const longUrl = response.data.originalUrl;
+                document.getElementById('longUrl').value = longUrl;
+                window.open(longUrl, '_self');
+                getUserStatistics();
+                getActiveUserStatistics();
+            }
+        } catch (error) {
+            console.error('Error redirecting to long URL:', error.message);
+            alert('Short URL not found');
+        }
+    }
     async function getUserStatistics() {
         try {
             const response = await axios.get('/api/shortLinks/all', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const userStatistics = response.data;
-            displayUserStatistics(userStatistics);
+            if (userStatistics.error && userStatistics.error !== 'OK') {
+                alert(`Error: ${userStatistics.error}`);
+            } else {
+                displayUserStatistics(userStatistics);
+            }
         } catch (error) {
             console.error('Error getting user statistics:', error.message);
         }
@@ -143,7 +161,11 @@
                 headers: { Authorization: `Bearer ${token}` }
             });
             const userStatistics = response.data;
-            displayActiveStatistics(userStatistics);
+            if (userStatistics.error && userStatistics.error !== 'OK') {
+                alert(`Error: ${userStatistics.error}`);
+            } else {
+                displayActiveStatistics(userStatistics);
+            }
         } catch (error) {
             console.error('Error getting user statistics:', error.message);
         }

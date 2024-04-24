@@ -10,7 +10,7 @@
 
 ## Spring Application Configuration
 
-- `SPRING_LOCAL_PORT`: The local port number to access the Spring application. Default value: `6868`.
+- `SPRING_LOCAL_PORT`: The local port number to access the Spring application. Default value: `8080`.
 - `SPRING_DOCKER_PORT`: The port number used by the Spring application Docker container. Default value: `8080`.
 
 # Creating Production Application Image

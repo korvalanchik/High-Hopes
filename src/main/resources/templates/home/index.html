@@ -10,12 +10,12 @@
         <h1 class="mb-4">[[#{home.index.headline}]]</h1>
         <p>[(#{home.index.text})]</p>
         <p class="mb-5">
-            <span class="fw-bold">[[#{home.index.user}]]</span>
-            <a th:href="@{/index-user}" target="_blank" class="btn btn-primary btn-sm">[[#{home.index.user.link}]]</a>
-            <span class="fw-bold">[[#{home.index.ui}]]</span>
-            <a th:href="@{/index-shortener}" target="_blank" class="btn btn-primary btn-sm">[[#{home.index.ui.link}]]</a>
-            <span class="fw-bold">[[#{home.index.swagger}]]</span>
-            <a th:href="@{/swagger-ui-custom.html}" target="_blank" class="btn btn-primary btn-sm">[[#{home.index.swagger.link}]]</a>
+            <span class="fw-bold"></span>
+            <a th:href="@{/index-user}" target="_self" class="btn btn-primary btn-sm">[[#{home.index.user}]]</a><br><br>
+            <span class="fw-bold"></span>
+            <a th:href="@{/index-shortener}" target="_self" class="btn btn-primary btn-sm">[[#{home.index.ui}]]</a><br><br>
+            <span class="fw-bold"></span>
+            <a th:href="@{/swagger-ui-custom.html}" target="_self" class="btn btn-primary btn-sm">[[#{home.index.swagger}]]</a>
         </p>
     </div>
     </body>
