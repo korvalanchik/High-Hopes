@@ -62,13 +62,18 @@
         const password = document.getElementById('password').value;
         try {
             const response = await axios.post('/api/auth/login', { username, password });
-            token = response.data.token;
-            localStorage.setItem('token', token);
-            document.getElementById('userStatisticsContainer').style.display = 'block';
-            document.getElementById('shortUrlContainer').style.display = 'block';
-            document.getElementById('shortUrlRedirect').style.display = 'block';
-            getUserStatistics();
-            getActiveUserStatistics();
+            const responseData = response.data;
+            if (responseData.error && responseData.error !== 'OK') {
+                alert(`Error: ${responseData.error}`);
+            } else {
+                token = response.data.token;
+                localStorage.setItem('token', token);
+                document.getElementById('userStatisticsContainer').style.display = 'block';
+                document.getElementById('shortUrlContainer').style.display = 'block';
+                document.getElementById('shortUrlRedirect').style.display = 'block';
+                getUserStatistics();
+                getActiveUserStatistics();
+            }
         } catch (error) {
             console.error('Error logging in:', error.message);
         }
@@ -94,9 +99,13 @@
             const response = await axios.post('/api/shortLinks', data, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            const shortUrl = response.data.short_url;
-            document.getElementById('shortUrl').value = shortUrl;
-            document.getElementById('shortUrlResult').style.display = 'block';
+            const responseData = response.data;
+            if (responseData.error && responseData.error !== 'OK') {
+                alert(`Error: ${responseData.error}`);
+            } else {
+                document.getElementById('shortUrl').value = responseData.short_url;
+                document.getElementById('shortUrlResult').style.display = 'block';
+            }
         } catch (error) {
             console.error('Error shortening URL:', error.message);
         }
@@ -115,11 +124,16 @@
 
         try {
             const response = await axios.post('/api/shortLinks/resolve', { shortUrl: shortUrl });
-            const longUrl = response.data.originalUrl;
-            document.getElementById('longUrl').value = longUrl;
-            window.open(longUrl, '_self');
-            getUserStatistics();
-            getActiveUserStatistics();
+            const responseData = response.data;
+            if (responseData.error && responseData.error !== 'OK') {
+                alert(`Error: ${responseData.error}`);
+            } else {
+                const longUrl = response.data.originalUrl;
+                document.getElementById('longUrl').value = longUrl;
+                window.open(longUrl, '_self');
+                getUserStatistics();
+                getActiveUserStatistics();
+            }
         } catch (error) {
             console.error('Error redirecting to long URL:', error.message);
             alert('Short URL not found');
@@ -131,7 +145,11 @@
                 headers: { Authorization: `Bearer ${token}` }
             });
             const userStatistics = response.data;
-            displayUserStatistics(userStatistics);
+            if (userStatistics.error && userStatistics.error !== 'OK') {
+                alert(`Error: ${userStatistics.error}`);
+            } else {
+                displayUserStatistics(userStatistics);
+            }
         } catch (error) {
             console.error('Error getting user statistics:', error.message);
         }
@@ -143,7 +161,11 @@
                 headers: { Authorization: `Bearer ${token}` }
             });
             const userStatistics = response.data;
-            displayActiveStatistics(userStatistics);
+            if (userStatistics.error && userStatistics.error !== 'OK') {
+                alert(`Error: ${userStatistics.error}`);
+            } else {
+                displayActiveStatistics(userStatistics);
+            }
         } catch (error) {
             console.error('Error getting user statistics:', error.message);
         }

@@ -54,7 +54,7 @@ public class ShortLinkResource {
         }
 
         final String link = shortLinkService.create(shortLinkCreateRequestDTO);
-        response.put("error", "ok");
+        response.put("error", "OK");
         response.put("short_url", host + "short/" + link);
 
         return ResponseEntity.status(HttpStatus.CREATED)

@@ -77,7 +77,7 @@ public class AuthenticationApi {
             return ResponseEntity.status(HttpStatus.ACCEPTED).contentType(MediaType.APPLICATION_JSON).body(response);
         }
 
-        response.put("error", "Ok");
+        response.put("error", "OK");
         final Long createdId = userService.create(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(response);
     }
