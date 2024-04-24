@@ -89,27 +89,6 @@ public class ShortLinkResource {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/resolve")
-    public ResponseEntity<GetOriginalUrlResponse> resolveShortUrl(@RequestBody ShortLinkResolveRequestDTO shortLinkResolveRequestDTO) {
-        String shortUrl = shortLinkResolveRequestDTO.getShortUrl();
-
-        if (shortUrl == null || shortUrl.isEmpty()) {
-            GetOriginalUrlResponse errorResponse = new GetOriginalUrlResponse();
-            errorResponse.setError(GetOriginalUrlResponse.Error.LINK_NOT_FOUND);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(errorResponse);
-        }
-
-        GetOriginalUrlResponse originalUrl = shortLinkService.getOriginalUrl(shortUrl);
-
-        shortLinkService.incrementClicks(shortUrl);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(originalUrl);
-    }
-
     @GetMapping("/active")
     public ResponseEntity<List<ShortLinkDTO>> getActiveShortLinks() {
         List<ShortLinkDTO> activeShortLinks = shortLinkService.getActiveShortLinks();

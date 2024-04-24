@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -54,6 +53,9 @@ public class User {
     private OffsetDateTime lastUpdated;
 
     public User(long l, String user1, String password1) {
+        this.id = l;
+        this.username = user1;
+        this.password = password1;
     }
 
     public User() {
