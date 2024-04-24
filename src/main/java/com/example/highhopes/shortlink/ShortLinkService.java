@@ -238,7 +238,7 @@ public class ShortLinkService {
         return shortLinkDTOs;
     }
 
-    public ShortLink getLinksByShortLink(String original_url){
-        return shortLinkRepository.findByOriginalLink(original_url);
+    public ShortLink getLinksByShortLink(String originalUrl){
+        return shortLinkRepository.findByOriginalLink(originalUrl);
     }
 }

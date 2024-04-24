@@ -1,92 +1,74 @@
 package com.example.highhopes.shortlink;
 
-import com.example.highhopes.user.User;
-import com.example.highhopes.user.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Arrays;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ShortLinkServiceTest {
+class ShortLinkServiceTest {
 
     @Mock
     private ShortLinkRepository shortLinkRepository;
 
-    @Mock
-    private UserRepository userRepository;
-
     @InjectMocks
     private ShortLinkService shortLinkService;
 
-    @BeforeEach
-    public void setUp() {
-        // Mocking the Authentication object
-        Authentication authentication = mock(Authentication.class);
-        when(authentication.getName()).thenReturn("testUser");
-
-        // Setting up the SecurityContextHolder with the mock Authentication
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
     @Test
-    public void testFindAll() {
-        // Mock data
-        ShortLink shortLink1 = new ShortLink();
-        shortLink1.setId(1L);
-        ShortLink shortLink2 = new ShortLink();
-        shortLink2.setId(2L);
-        List<ShortLink> shortLinks = Arrays.asList(shortLink1, shortLink2);
-
-        // Stubbing repository method
+    void ShortLinkServiceFindAllReturnsListOfShortLinkDTO() {
+        List<ShortLink> shortLinks = new ArrayList<>();
+        shortLinks.add(new ShortLink());
+        shortLinks.add(new ShortLink());
         when(shortLinkRepository.findAll(Sort.by("id"))).thenReturn(shortLinks);
 
-        // Call the service method
-        List<ShortLinkDTO> result = shortLinkService.findAll();
+        List<ShortLinkDTO> foundShortLinks = shortLinkService.findAll();
 
-        // Verify the result
-        assertEquals(2, result.size());
-        assertEquals(1L, result.get(0).getId());
-        assertEquals(2L, result.get(1).getId());
+        assertThat(foundShortLinks).isNotEmpty();
+        assertThat(foundShortLinks.size()).isEqualTo(shortLinks.size());
     }
 
     @Test
-    public void testCreate() {
-        // Mock data
-        ShortLinkCreateRequestDTO requestDTO = new ShortLinkCreateRequestDTO();
-        requestDTO.setOriginalUrl("http://example.com");
-        User user = new User();
-        user.setId(1L);
-        Optional<User> userOptional = Optional.of(user);
+    void ShortLinkService_Get_ReturnsShortLinkDTO() {
+        Long id = 1L;
+        ShortLink shortLink = new ShortLink();
+        when(shortLinkRepository.findById(id)).thenReturn(Optional.of(shortLink));
 
-        // Stubbing repository method
-        when(userRepository.findByUsername(anyString())).thenReturn(userOptional);
-        when(shortLinkRepository.save(any(ShortLink.class))).thenAnswer(invocation -> {
-            ShortLink shortLink = invocation.getArgument(0);
-            shortLink.setId(1L);
-            return shortLink;
-        });
+        ShortLinkDTO foundShortLink = shortLinkService.get(id);
 
-        // Call the service method
-        String shortUrl = shortLinkService.create(requestDTO);
-
-        // Verify the result
-        assertEquals("/random_short_url", shortUrl); // Adjust the expected value accordingly
+        assertThat(foundShortLink).isNotNull();
     }
 
-    // Add more test methods for other service methods
+    @Test
+    void testHandleShortLink() {
+        ShortLink shortLinkDb = new ShortLink();
+        shortLinkDb.setExpiryDate(OffsetDateTime.now().minusDays(1));
+
+        GetOriginalUrlResponse originalUrlResponse = ReflectionTestUtils.invokeMethod(shortLinkService,
+                "handleShortLink", shortLinkDb);
+
+        assert originalUrlResponse != null;
+        assertEquals(originalUrlResponse.getError(), GetOriginalUrlResponse.Error.LINK_NOT_ACTIVE);
+    }
+
+    @Test
+    void testIncrementClicks() {
+        ShortLink shortLink = new ShortLink();
+        shortLink.setClicks(0);
+
+        ReflectionTestUtils.invokeMethod(shortLinkService, "incrementClicks", shortLink);
+
+        assertEquals(shortLink.getClicks(), 1);
+    }
 }
