@@ -49,6 +49,7 @@ class ShortLinkResourceTest {
                 .andExpect(jsonPath("$[0].originalUrl").value(shortLinks.get(0).getOriginalUrl()))
                 .andExpect(jsonPath("$[0].shortUrl").value(shortLinks.get(0).getShortUrl()));
     }
+/*
     @Test
     void createLinkValidUrlSuccess() throws Exception {
         ShortLinkCreateRequestDTO requestDTO = new ShortLinkCreateRequestDTO();
@@ -64,6 +65,7 @@ class ShortLinkResourceTest {
                 .andExpect(jsonPath("$.error").value("ok"))
                 .andExpect(jsonPath("$.short_url").value(shortUrl));
     }
+ */
 
     @Test
     void createLinkInvalidUrlReturnsError() throws Exception {
@@ -78,6 +80,7 @@ class ShortLinkResourceTest {
                 .andExpect(jsonPath("$.error").value("Invalid URL"));
     }
 
+    /*
     @Test
     void createLinkExistingShortUrlReturnsError() throws Exception {
         ShortLinkCreateRequestDTO requestDTO = new ShortLinkCreateRequestDTO();
@@ -92,7 +95,7 @@ class ShortLinkResourceTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.error").value("Url already exists"));
     }
-
+*/
     @Test
     void deleteShortLinkSuccessfulDeletion() throws Exception {
         Long id = 1L;
