@@ -10,7 +10,7 @@ services:
       - POSTGRES_PASSWORD=$POSTGRESDB_ROOT_PASSWORD
       - POSTGRES_DB=$POSTGRESDB_DATABASE
     ports:
-      - $POSTGRESDB_LOCAL_PORT:$POSTGRESDB_DOCKER_PORT
+      - "${POSTGRESDB_LOCAL_PORT}:${POSTGRESDB_DOCKER_PORT}"
 
   app:
     depends_on:
@@ -18,9 +18,10 @@ services:
     build: .
     restart: on-failure
     ports:
-      - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
+      - ${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresdb:$POSTGRESDB_DOCKER_PORT/$POSTGRESDB_DATABASE
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresdb:$POSTGRESDB_DOCKER_PORT/$POSTGRESDB_DATABASE
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ep-quiet-bonus-a2dq96pd.eu-central-1.pg.koyeb.app/koyebdb
       - SPRING_DATASOURCE_USERNAME=$POSTGRESDB_USER
       - SPRING_DATASOURCE_PASSWORD=$POSTGRESDB_ROOT_PASSWORD
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
